@@ -11,13 +11,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.ivankov.newsapp.navigation.AppNavHost
-import ru.ivankov.newsapp.ui.theme.NotesAppMVVMTheme
+import ru.ivankov.newsapp.ui.theme.NewsAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NotesAppMVVMTheme {
+            NewsAppTheme {
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    NotesAppMVVMTheme {
+    NewsAppTheme {
 
     }
 }

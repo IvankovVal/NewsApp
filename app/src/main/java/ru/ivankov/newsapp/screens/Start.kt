@@ -13,10 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import ru.ivankov.newsapp.ui.theme.NewsAppTheme
 
 @Composable
-fun Start(navController: NavHostController) {
+fun StartScreen(navController: NavHostController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -49,6 +52,14 @@ fun Start(navController: NavHostController) {
         ){
             Text(text = "Регистрация")
         }
+
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun prevStartScreen(){
+    NewsAppTheme {
+        StartScreen(navController = rememberNavController())
 
     }
 }
