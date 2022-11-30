@@ -8,12 +8,12 @@ import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.ui.theme.NewsAppTheme
 
 @Composable
-fun FriendScreen(navController: NavHostController) {
+fun FriendsScreen(navController: NavHostController) {
     Text(text = "Friend screen")
 }
 @Preview(showBackground = true)
 @Composable
-fun prevFriendScreen(){
+fun prevFriendsScreen(){
     NewsAppTheme {
         RegistrationScreen(navController = rememberNavController())
 

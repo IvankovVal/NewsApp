@@ -26,7 +26,7 @@ fun AppNavHost() {
         composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController)}
         composable(AppNavHost.MyProfile.route){ MyProfileScreen(navController = navController)}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController)}
-        composable(AppNavHost.Friend.route){ FriendScreen(navController = navController)}
+        composable(AppNavHost.Friend.route){ FriendsScreen(navController = navController)}
 
     }
 }
