@@ -33,10 +33,7 @@ fun RegistrationScreen(navController: NavHostController) {
 
 
                 TextField(value = "Имя", onValueChange = {},)
-                TextField(value = "Фамилия", onValueChange = {},)
                 TextField(value = "email", onValueChange = {},)
-                TextField(value = "пароль", onValueChange = {})
-                Text(text = "А ещё как-то аватар нужно")
 
 
             }

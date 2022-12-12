@@ -1,60 +1,59 @@
 package ru.ivankov.newsapp.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import ru.ivankov.newsapp.navigation.AppNavHost
 import ru.ivankov.newsapp.ui.theme.NewsAppTheme
 
 @Composable
 fun StartScreen(navController: NavHostController) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    val context = LocalContext.current
 
-// Поле ввода____________________________________________________________________________________
-        Box(modifier = Modifier
-            .background(Color.Yellow, RectangleShape)
-            .fillMaxWidth()
-            .weight(3f),
-            contentAlignment = Alignment.Center
-        ){
-            Column {
+    //присваеваем изменяемое состояние текстового поля
+    val email = remember { mutableStateOf(TextFieldValue())}
+    val emailErrorState = remember { mutableStateOf(false)}
 
+    val password = remember { mutableStateOf(TextFieldValue())}
+    val passwordErrorState = remember { mutableStateOf(false)}
+   Scaffold(
+       modifier = Modifier.fillMaxSize()
+   ) {
+       Column(
+           modifier = Modifier.fillMaxSize(),
+           horizontalAlignment = Alignment.CenterHorizontally,
+           verticalArrangement = Arrangement.Center
+       ) {
+           TextField(value = "email", onValueChange = {})
+           TextField(value = "пароль", onValueChange = {})
+//Кнопка входа
+           Button(onClick = { navController.navigate(route = AppNavHost.MyProfile.route)},
+               modifier = Modifier.padding(30.dp)
+               ) {Text(text = "Вход")}
+//Кнопка регистрации
+           Button(onClick = { navController.navigate(route = AppNavHost.Registration.route)},
+               modifier = Modifier.padding(30.dp)
+           ) {Text(text = "Регистрация")}
 
-                TextField(value = "email", onValueChange = {},)
-
-                TextField(value = "пароль", onValueChange = {})
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Вход")
-                }
-            }
-        }
-// Поле регистрации____________________________________________________________________________________
-        Box(modifier = Modifier
-            .background(Color.Red, RectangleShape)
-            .fillMaxWidth()
-            .weight(2f),
-            contentAlignment = Alignment.Center
-        ){
-            Text(text = "Регистрация")
-        }
-
-    }
+           
+       }
+   }
 }
+//____________________________________________________________________________________________________
 @Preview(showBackground = true)
 @Composable
 fun prevStartScreen(){
@@ -63,3 +62,37 @@ fun prevStartScreen(){
 
     }
 }
+//Column(
+//horizontalAlignment = Alignment.CenterHorizontally,
+//verticalArrangement = Arrangement.Center
+//) {
+//
+//// Поле ввода____________________________________________________________________________________
+//    Box(modifier = Modifier
+//        .background(Color.Yellow, RectangleShape)
+//        .fillMaxWidth()
+//        .weight(3f),
+//        contentAlignment = Alignment.Center
+//    ){
+//        Column {
+//
+//
+//            TextField(value = "email", onValueChange = {},)
+//
+//            TextField(value = "пароль", onValueChange = {})
+//            Button(onClick = { /*TODO*/ }) {
+//                Text(text = "Вход")
+//            }
+//        }
+//    }
+//// Поле регистрации____________________________________________________________________________________
+//    Box(modifier = Modifier
+//        .background(Color.Red, RectangleShape)
+//        .fillMaxWidth()
+//        .weight(2f),
+//        contentAlignment = Alignment.Center
+//    ){
+//        Text(text = "Регистрация")
+//    }
+//
+//}

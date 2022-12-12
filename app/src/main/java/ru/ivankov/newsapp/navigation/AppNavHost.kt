@@ -9,7 +9,6 @@ import ru.ivankov.newsapp.screens.*
 sealed class AppNavHost(val route: String) {
     object Start: AppNavHost("start_screen")
     object Registration: AppNavHost("registration_screen")
-    object Enter: AppNavHost("enter_screen")
     object MyProfile: AppNavHost("myProfile_screen")
     object News: AppNavHost("news_screen")
     object Friend: AppNavHost("friend_screen")
