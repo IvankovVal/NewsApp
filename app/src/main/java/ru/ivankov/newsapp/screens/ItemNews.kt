@@ -32,3 +32,11 @@ fun ItemNews(item:NewsModel) {
 
     }
 }
+//ItemNews(
+//responseData = it,
+//MakeToast,
+//navController,
+//alertDialogTrigger,
+//perPage,
+//permission_dialogue
+//)
