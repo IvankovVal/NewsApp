@@ -1,7 +1,6 @@
-package ru.ivankov.newsapp.screens
+package ru.ivankov.newsapp.view.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -17,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ru.ivankov.newsapp.navigation.AppNavHost
-import ru.ivankov.newsapp.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
 fun StartScreen(navController: NavHostController) {
@@ -38,8 +37,14 @@ fun StartScreen(navController: NavHostController) {
            horizontalAlignment = Alignment.CenterHorizontally,
            verticalArrangement = Arrangement.Center
        ) {
-           TextField(value = "email", onValueChange = {})
-           TextField(value = "пароль", onValueChange = {})
+           TextField(
+               value = "email", onValueChange = {},
+               modifier = Modifier.padding(12.dp)
+               )
+           TextField(
+               value = "пароль", onValueChange = {},
+               modifier = Modifier.padding(12.dp)
+               )
 //Кнопка входа
            Button(onClick = { navController.navigate(route = AppNavHost.MyProfile.route)},
                modifier = Modifier.padding(30.dp)

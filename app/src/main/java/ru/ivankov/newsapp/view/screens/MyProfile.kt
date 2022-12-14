@@ -1,21 +1,14 @@
 
-package ru.ivankov.newsapp.screens
+package ru.ivankov.newsapp.view.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,8 +17,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.R
-import ru.ivankov.newsapp.navigation.AppNavHost
-import ru.ivankov.newsapp.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
 fun MyProfileScreen(navController: NavHostController) {

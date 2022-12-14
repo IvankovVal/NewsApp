@@ -1,4 +1,4 @@
-package ru.ivankov.newsapp.ui.theme
+package ru.ivankov.newsapp.view.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

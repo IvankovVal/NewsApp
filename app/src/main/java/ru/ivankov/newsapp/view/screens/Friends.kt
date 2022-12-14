@@ -1,11 +1,11 @@
-package ru.ivankov.newsapp.screens
+package ru.ivankov.newsapp.view.screens
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ru.ivankov.newsapp.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
 fun FriendsScreen(navController: NavHostController) {
@@ -15,7 +15,7 @@ fun FriendsScreen(navController: NavHostController) {
 @Composable
 fun prevFriendsScreen(){
     NewsAppTheme {
-        RegistrationScreen(navController = rememberNavController())
+        FriendsScreen(navController = rememberNavController())
 
     }
 }

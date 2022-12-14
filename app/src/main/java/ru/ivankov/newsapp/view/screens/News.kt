@@ -1,6 +1,5 @@
-package ru.ivankov.newsapp.screens
+package ru.ivankov.newsapp.view.screens
 
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -23,8 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.model.NewsModel
-import ru.ivankov.newsapp.navigation.AppNavHost
-import ru.ivankov.newsapp.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
 fun NewsScreen(navController: NavHostController) {
@@ -167,60 +165,3 @@ fun prevNewsScreen() {
 
     }
 }
-/*
-@Composable
-fun TwoCards() {
-// Карточка для поиска новостей
-    Card(
-
-        shape = RoundedCornerShape(15.dp),
-        elevation = 5.dp,
-        modifier = Modifier
-            .padding(start = 5.dp, top = 5.dp, end = 5.dp)
-            .border(2.dp, Color.DarkGray, shape = RoundedCornerShape(20.dp))
-    ) {
-        Button(onClick = { //Вызов диалога для поиска новости
-                         },
-            modifier = Modifier.padding(30.dp)
-        ) {Text(text = "Поиск новостей")}
-
-    }
-    // Карточка для  отображения новостей
-    Card(
-
-        shape = RoundedCornerShape(15.dp),
-        elevation = 5.dp,
-        modifier = Modifier
-            .padding(start = 5.dp, top = 5.dp, end = 5.dp)
-            .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
-    ) {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Gray)
-                .padding(4.dp)
-        ) {
-            itemsIndexed(
-                listOf(
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                    NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                )
-            ) { _, item ->
-                ItemNews(item = item)
-            }
-        }
-
-    }
-
-}}
-*/
