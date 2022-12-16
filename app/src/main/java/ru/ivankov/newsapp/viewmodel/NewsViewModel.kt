@@ -1,8 +1,12 @@
 package ru.ivankov.newsapp.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.json.JSONTokener
-import ru.ivankov.newsapp.model.NewsModel
-import ru.ivankov.newsapp.model.UserModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.ivankov.newsapp.model.*
+import ru.ivankov.newsapp.view.MainActivity
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -26,91 +33,59 @@ import javax.net.ssl.HttpsURLConnection
 
    * */
 class NewsViewModel:ViewModel() {
+    //------------------Свойства----------------------------------------------------
+    var newsList: MutableLiveData<Response<NewsData>> = MutableLiveData()
 
-    val newsList = mutableStateListOf<NewsModel>()
+    var authorizationResponse: AuthorizationResponse? = null
 
+    //------------------Методы----------------------------------------------------
+    fun postRegistration() {
+        viewModelScope.launch {
+//Тут пишем запрос
+            val apiInterface = ApiService.create().registrationRequest(
+                RegistrationRequestBody("","any@mail","anyName", "12345", "user")
+                //Сюда пишем данные, которые требуются для регистрации
+//                val avatar: String,
+//            val email: String,
+//            val name: String,
+//            val password: String,
+//            val role: String
+            )
 
-    fun getRegistration(avatar:String, name: String,email: String, password: String, role:String){
-            viewModelScope.launch {
-                val jsonObject = JSONObject()
-
-//                {
-//                    "avatar": "string",
-//                    "email": "string",
-//                    "name": "string",
-//                    "password": "string",
-//                    "role": "string"
-//                }
-
-                jsonObject.put("text", avatar)
-                jsonObject.put("text", email)
-                jsonObject.put("text", name)
-                jsonObject.put("text", password)
-                jsonObject.put("text", role)
-                val jsonObjectString = jsonObject.toString()
-
-                GlobalScope.launch(Dispatchers.IO) {
-                    val url = URL("https://news-feed.dunice-testing.com/api/v1/auth/register")
-                    val httpsURLConnection = url.openConnection() as HttpsURLConnection
-                    httpsURLConnection.requestMethod = "POST"
-                    httpsURLConnection.setRequestProperty("Content-Type", "application/json")
-                    httpsURLConnection.setRequestProperty("Accept", "application/json")
-                    httpsURLConnection.doInput = true
-                    httpsURLConnection.doOutput = true
-
-                    val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
-                    outputStreamWriter.write(jsonObjectString)
-                    outputStreamWriter.flush()
-
-                    val responseCode = httpsURLConnection.responseCode
-                    if (responseCode == HttpsURLConnection.HTTP_OK) {
-                        val response = httpsURLConnection.inputStream.bufferedReader()//отклик
-                            .use { it.readText() }
-                        withContext(Dispatchers.IO) {
-                            val jsonArray = JSONTokener(response).nextValue() as JSONObject
-                            val data = jsonArray.getJSONObject("data")
-                            val contentArray = data.getJSONArray("content")
-                            val taskList: ArrayList <UserModel> = ArrayList()
-                            //парсим ответ в список
-                            for (i in 0 until contentArray.length()) {
-                                val task = contentArray.getJSONObject(i)
-                                taskList.add (UserModel.parseFromJSONObject())
-                            }
-                    else {
-                    }
+//Асинхронно отправить запрос и уведомить callbackо его ответе или, если произошла ошибка при обращении к серверу, создании запроса или обработке ответа.
+            apiInterface.enqueue( object : Callback<AuthorizationResponse> {
+                override fun onResponse(call: Call<AuthorizationResponse>,response: Response<AuthorizationResponse>)
+                {
+                    val responseBody = response.body()
+                   // Toast.makeText(coroutineContext, response.body().toString(), Toast.LENGTH_LONG).show()
+                    Log.i(TAG, "$response.body().toString()")
+                //authorizationResponse = responseBody.data
                 }
-            }
 
+                override fun onFailure(call: Call<AuthorizationResponse>, t: Throwable) {
+
+                }
+
+
+            })
+
+
+        }
     }
-
-//Registration - создаётся пользователь
-    /*
-    * Post запрос
-    * "avatar": "string",
-  "email": "string",
-  "name": "string",
-  "password": "string",
-  "role": "string"
-  * */
-
-    //
-    /*
-    * Post запрос
-    "email": "string",
-  "password": "string"
-  * С ответом:
-  * {
-  "data": {
-    "avatar": "string",
-    "email": "string",
-    "id": "string",
-    "name": "string",
-    "role": "string",
-    "token": "string"
-  },
-  "statusCode": 0,
-  "success": true
 }
-* Этот ответ нужно заполнить в MyProfile
-  * */
-}
+//val registrationResp = ApiService.registrationRequest(
+//    RegistrationRequestBody(
+//        //тело запроса на авторизацию
+//        //те данные которые нужны для авторизации
+//
+//    )
+//).awaitResponse()
+//if (registrationResp.isSuccessful) {
+//    inputLogin.value = inputRegisterEmail.value
+//    inputPassword.value = inputRegisterPassword.value
+//    registerUI.value = false
+//    loginUI.value = true
+//    Repository.uploadedImage.value = null
+//} else {
+//    MakeToast("Register failed")
+//}

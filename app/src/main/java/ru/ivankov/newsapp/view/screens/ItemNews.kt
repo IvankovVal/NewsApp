@@ -12,11 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.ivankov.newsapp.model.NewsModel
+import ru.ivankov.newsapp.model.NewsContent
+import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
-fun ItemNews(item:NewsModel) {
+fun ItemNews(item: NewsContent) {
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка__________________________________________________________________________________
     Card(
@@ -31,9 +32,9 @@ fun ItemNews(item:NewsModel) {
         Column(modifier = Modifier
             .padding(start = 20.dp)) {
 
-            Text(text = "${item.userName}")
-            Text(text = "${item.newsId} - ${item.newsTitle}")
-            Text(text = "${item.newsDescription}")
+            Text(text = "${item.username}")
+            Text(text = "${item.id} - ${item.title}")
+            Text(text = "${item.description}")
         }
 
     }
@@ -47,13 +48,16 @@ fun ItemNews(item:NewsModel) {
 @Composable
 fun prevItemNews(){
     NewsAppTheme {
-        ItemNews(item = NewsModel(
+        ItemNews(item = NewsContent(
+            "Какая-то новость",
             1,
-            "Валерий",
-            1,
+            "",
+            NewsContentTags(1,"Tag"),
             "Название",
-            "Это текст новости"
+            "ЮID",
+            "Имя пользователя"
         )
+
         )
 
     }

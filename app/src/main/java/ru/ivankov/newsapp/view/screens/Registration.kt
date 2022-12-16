@@ -57,15 +57,16 @@ fun RegistrationScreen(navController: NavHostController,
             Column(horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
+//------------------Кнопка регистрации--------------------------------------------------------------
                 Button(
                     onClick = {
                         Toast.makeText(context, "Нажато", Toast.LENGTH_LONG).show()
-                       // vmNews.getRegistration()
+                        vmNews.postRegistration()
 
                     },
                     modifier = Modifier.padding(12.dp))
                 {Text(text = "Зарегистрироваться")}
-
+//------------------Кнопка возврата на стартовую страницу-------------------------------------------
                 Button(
                     onClick = { navController.navigate(route = AppNavHost.Start.route)},
                     modifier = Modifier.padding(12.dp))

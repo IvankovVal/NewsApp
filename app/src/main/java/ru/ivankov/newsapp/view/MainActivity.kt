@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.screens.NewsScreen
@@ -21,12 +22,11 @@ import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var model: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vmNews = NewsViewModel()
+        val vmNews = ViewModelProvider(this)[NewsViewModel::class.java]
 
         setContent {
 

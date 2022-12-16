@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ru.ivankov.newsapp.model.NewsModel
+import ru.ivankov.newsapp.model.NewsContent
+import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
@@ -55,20 +56,20 @@ fun NewsScreen(navController: NavHostController) {
             ) {
                 itemsIndexed(
                     listOf(
-                        NewsModel(1, "Миша", 1, "Наступила осень", "Птицы улетели"),
-                        NewsModel(2, "Миша", 2, "Наступила осень", "Птицы улетели"),
-                        NewsModel(2, "Миша", 3, "Наступила осень", "Птицы улетели"),
-                        NewsModel(4, "Миша", 4, "Наступила осень", "Птицы улетели"),
-                        NewsModel(5, "Миша", 5, "Наступила осень", "Птицы улетели"),
-                        NewsModel(1, "Миша", 6, "Наступила осень", "Птицы улетели"),
-                        NewsModel(7, "Миша", 7, "Наступила осень", "Птицы улетели"),
-                        NewsModel(8, "Миша", 8, "Наступила осень", "Птицы улетели"),
-                        NewsModel(9, "Миша", 9, "Наступила осень", "Птицы улетели"),
-                        NewsModel(9, "Миша", 10, "Наступила осень", "Птицы улетели"),
-                        NewsModel(11, "Миша", 11, "Наступила осень", "Птицы улетели"),
-                        NewsModel(11, "Миша", 12, "Наступила осень", "Птицы улетели"),
-                        NewsModel(11, "Миша", 13, "Наступила осень", "Птицы улетели"),
-                        NewsModel(11, "Миша", 14, "Наступила осень", "Птицы улетели"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
+
                     )
                 ) { _, item ->
                     ItemNews(item = item)
