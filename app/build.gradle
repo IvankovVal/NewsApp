@@ -65,10 +65,11 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     //зависимость для приведения livedata к State
-    implementation "androidx.compose.runtime:runtime-livedata:1.1.1"
+    implementation "androidx.compose.runtime:runtime-livedata:1.1.0"
 
     //Для ретрофит
     implementation('com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10')
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
 }

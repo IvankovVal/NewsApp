@@ -1,11 +1,13 @@
 package ru.ivankov.newsapp.view.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,17 +20,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
 @Composable
-fun StartScreen(navController: NavHostController) {
+fun StartScreen(
+    navController: NavHostController,
+    vmNews: NewsViewModel
+) {
     val context = LocalContext.current
+    //authorizationResponse - состояние страницы. При его изменении должна происходить рекомпозиция
+    val enterState = vmNews.authorizationResponse.observeAsState()
 
-    //присваеваем изменяемое состояние текстового поля
-    val email = remember { mutableStateOf(TextFieldValue())}
-    val emailErrorState = remember { mutableStateOf(false)}
-
-    val password = remember { mutableStateOf(TextFieldValue())}
-    val passwordErrorState = remember { mutableStateOf(false)}
    Scaffold(
        modifier = Modifier.fillMaxSize()
    ) {
@@ -46,9 +48,22 @@ fun StartScreen(navController: NavHostController) {
                modifier = Modifier.padding(12.dp)
                )
 //Кнопка входа
-           Button(onClick = { navController.navigate(route = AppNavHost.MyProfile.route)},
+           Button( onClick = {
+               vmNews.postAutentification()
+               if (//если статус ответа на логин не успешный
+                   enterState.value?.name != "Валерий"
+                 //  || enterState.value?.statusCode != 201
+               ){//то выдаём Тост или Snackbar о том, что всё плохо
+                   Toast.makeText(context, "${enterState.value?.name}", Toast.LENGTH_LONG).show()
+               }
+               else{
+               navController.navigate(route = AppNavHost.MyProfile.route)
+                            }
+                             },
                modifier = Modifier.padding(30.dp)
                ) {Text(text = "Вход")}
+
+
 //Кнопка регистрации
            Button(onClick = { navController.navigate(route = AppNavHost.Registration.route)},
                modifier = Modifier.padding(30.dp)
@@ -63,7 +78,11 @@ fun StartScreen(navController: NavHostController) {
 @Composable
 fun prevStartScreen(){
     NewsAppTheme {
-        StartScreen(navController = rememberNavController())
+        StartScreen(
+            navController = rememberNavController(),
+            vmNews = NewsViewModel()
+
+            )
 
     }
 }

@@ -22,7 +22,7 @@ fun AppNavHost() {
 //в параметры NavHost передать navController, который создан выше и наш стартовый экран
     NavHost(navController = navController, startDestination = AppNavHost.Start.route) {
 //route означает ссылка, в фигурных скобках задаём то, куда она ведёт destination
-        composable(AppNavHost.Start.route){ StartScreen(navController = navController)}
+        composable(AppNavHost.Start.route){ StartScreen(navController = navController, vmNews = NewsViewModel())}
         composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController, vmNews = NewsViewModel())}
         composable(AppNavHost.MyProfile.route){ MyProfileScreen(navController = navController)}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController)}

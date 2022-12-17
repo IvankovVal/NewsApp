@@ -3,6 +3,7 @@ package ru.ivankov.newsapp.model
 /*
 * Классы для создания объектов в которых будут реализовываться запросы и ответы
 * */
+
 //------------------Модель запроса всех новостей----------------------------------------------------
 data class NewsListResponse(
     var data: NewsData
@@ -42,7 +43,7 @@ data class AuthorizationDataResponse(
     val role: String,
     val token: String
 )
-//------------------Модель запроса на регистрацию----------------------------------------------------
+//------------------Модель запроса на логин (вход)----------------------------------------------------
 data class LoginRequestBody(
     val email: String,
     val password: String

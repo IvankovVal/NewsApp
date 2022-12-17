@@ -7,6 +7,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,7 @@ fun RegistrationScreen(navController: NavHostController,
                        vmNews: NewsViewModel
 
 ) {
+
     val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
