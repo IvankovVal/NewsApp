@@ -46,7 +46,7 @@ class NewsViewModel : ViewModel() {
                        // val answer
                   //  profileData?.postValue( response.body()?.data)
                       // profileData?.postValue(response.body()?.data)
-                   this@NewsViewModel.profileData?.value = DataLoginResponse (
+                   profileData?.value = DataLoginResponse (
                         avatar = response.body()?.data!!.avatar,
                         email = response.body()?.data!!.email,
                         id = response.body()?.data!!.id,
@@ -55,7 +55,7 @@ class NewsViewModel : ViewModel() {
                         token = response.body()?.data!!.token,
                             )
 
-                    Log.d(TAG, "Значение профиля - ${this@NewsViewModel.profileData?.value?.name}")
+                    Log.d(TAG, "Значение профиля - ${profileData?.value?.name}")
                 }
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
 
