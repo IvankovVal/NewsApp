@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.R
@@ -29,20 +30,14 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 @Composable
 fun MyProfileScreen(
     navController: NavHostController,
-    vmNews: NewsViewModel
+    vmNews: NewsViewModel = viewModel()
 ) {
+  //  val vmNews = viewModel<NewsViewModel>()
     val context = LocalContext.current
-    //profileData - состояние страницы. При его изменении должна происходить рекомпозиция
-    val profileState = vmNews.profileData?.observeAsState(
-//        DataLoginResponse(
-//        avatar = "",
-//        email = "no email",
-//        id = "no id",
-//        "no name",
-//        "no role",
-//        "no token")
-    )
-    val userNewsState = vmNews.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
+   val profileState by vmNews.profileData.collectAsState()
+
+
+    val userNewsState by vmNews.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
     //основной контейнер(похоже можно было не создавать)
 
     androidx.compose.material.Surface(color = Color.White) {
@@ -73,14 +68,14 @@ fun MyProfileScreen(
                 contentDescription = "Аватар пользователя", )
 ////Имя пользователя--------------------------------------------------------------
             Text(
-                text = "${profileState?.value?.name}",
+                text = "${profileState.name }",
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.SemiBold,
-
                 )
+
 ////Email пользователя------------------------------------------------------------
             Text(
-                text = "${profileState?.value?.email}",
+                text = "$${profileState.email }",
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.SemiBold,
 

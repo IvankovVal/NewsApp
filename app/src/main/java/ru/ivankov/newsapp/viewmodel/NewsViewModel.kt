@@ -2,9 +2,14 @@ package ru.ivankov.newsapp.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,12 +27,23 @@ class NewsViewModel : ViewModel() {
     //------------------Свойства----------------------------------------------------
     //Список новостей
     val newsList: MutableLiveData<ArrayList<NewsContent>> by lazy { MutableLiveData<ArrayList<NewsContent>>() }
-  //  private val newsList = MutableLiveData<List<NewsContent>>()
     val newsModel = MutableLiveData<List<NewsContent>>()
 
-    val profileData: MutableLiveData<DataLoginResponse> by lazy { MutableLiveData<DataLoginResponse>() }
+     val profileData = MutableStateFlow<DataLoginResponse>(
+        DataLoginResponse(
+            "",
+            "старт email",
+            "0",
+            "Безымянный",
+            "незавидная",
+            "что это?"
+        )
+    )
+    //val _profileData: State<DataLoginResponse> = profileData
 
-    // val authorizationResponse: MutableStateFlow<AuthorizationResponse?> = MutableStateFlow(AuthorizationResponse?)
+    //val _profileData: StateFlow<DataLoginResponse>(profileData)
+
+
     //------------------Методы----------------------------------------------------
     //------------------Регистрация----------------------------------------------------
     fun postRegistration() {
@@ -38,24 +54,25 @@ class NewsViewModel : ViewModel() {
     fun postAutentification() {
         viewModelScope.launch {
             //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
-            val postLogin = ApiService.instance?.api?.postLogin(LoginRequest("bellator87@mail.ru", "198727"))
+            val postLogin =
+                ApiService.instance?.api?.postLogin(LoginRequest("bellator87@mail.ru", "198727"))
             postLogin?.enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>)
-                { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
+                override fun onResponse(
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>
+                ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
 ////в случае, если postLogin() выполнится удачно
-                       // val answer
-                  //  profileData?.postValue( response.body()?.data)
-                      // profileData?.postValue(response.body()?.data)
-                   profileData?.value = DataLoginResponse (
+
+                   profileData.value =
+                        DataLoginResponse(
                         avatar = response.body()?.data!!.avatar,
                         email = response.body()?.data!!.email,
                         id = response.body()?.data!!.id,
                         name = response.body()?.data!!.name,
                         role = response.body()?.data!!.role,
                         token = response.body()?.data!!.token,
-                            )
-
-                    Log.d(TAG, "Значение профиля - ${profileData?.value?.name}")
+                    )
+                    Log.d(TAG, "Значение профиля - ${profileData.value.name}")
                 }
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
 
@@ -65,5 +82,9 @@ class NewsViewModel : ViewModel() {
             )
         }
     }
+    //profileData.
+     //= _profileData
 }
+
+
 

@@ -14,8 +14,8 @@ data class LoginResponse (
     val statusCode: Int,
     val success: Boolean,
 )
-data class DataLoginResponse (
-    val avatar: String,
+data class DataLoginResponse(
+    var avatar: String,
     val email: String,
     val id: String,
     val name: String,
