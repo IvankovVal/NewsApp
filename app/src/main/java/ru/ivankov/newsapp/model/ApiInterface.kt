@@ -15,7 +15,7 @@ interface ApiInterface {
 
 // getNews
 
-    @GET("/api/v1/news?page=1&perPage=8")
+    @GET("/api/v1/news")
     fun newsRequest(
         @Query("page") page: Int,
         @Query("perPage") perPage: Int

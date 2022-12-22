@@ -35,27 +35,27 @@ fun NewsScreen(
     val context = LocalContext.current
     val newsState = vmNews.newsList.observeAsState(listOf())
     //Расположим карточки с помощью ConstrainLayout
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (newsListCard, buttonsFieldCard) = createRefs()
-
+    Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
 // Карточка для  отображения новостей---------------------------------------------------------------
         Card(
 
             shape = RoundedCornerShape(15.dp),
             elevation = 5.dp,
             modifier = Modifier
+                .weight(8.5f)
                 .padding(start = 5.dp, end = 5.dp)
                 .border(2.dp, Color.Black, shape = RoundedCornerShape(15.dp))
 //               .fillMaxSize()
-                .constrainAs(newsListCard) {
-                    start.linkTo(parent.start, 4.dp)
-                    end.linkTo(parent.end, 4.dp)
-                    top.linkTo(parent.top, 4.dp)
-                    bottom.linkTo(buttonsFieldCard.top, 4.dp)
-                }
+
         ) {
 // ----------------------Список новостей-----------------------------
-            LazyColumn {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.Gray)
+                    .padding(4.dp)
+            ) {
                 items(newsState.value, key = {it.id}){
                     ItemNews(item = it)//it указывает на newsState.value
                 }
@@ -68,14 +68,11 @@ fun NewsScreen(
             shape = RoundedCornerShape(15.dp),
             elevation = 5.dp,
             modifier = Modifier
+                .weight(1f)
                 .padding(start = 5.dp, end = 5.dp)
                 .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
                 .fillMaxWidth()
-                .constrainAs(buttonsFieldCard) {
-                    bottom.linkTo(parent.bottom, 4.dp)
-                    start.linkTo(parent.start, 4.dp)
-                    end.linkTo(parent.end, 4.dp)
-                }
+
         ) {
 //-------------------------------------------------------------------------------------------------
             Row {
@@ -88,7 +85,8 @@ fun NewsScreen(
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Close,
+                    Icon(
+                        imageVector = Icons.Default.Close,
                         contentDescription = "Закрыть",
 
                         )
@@ -101,7 +99,8 @@ fun NewsScreen(
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Person,
+                    Icon(
+                        imageVector = Icons.Default.Person,
                         contentDescription = "Профиль",
 
                         )
@@ -116,7 +115,8 @@ fun NewsScreen(
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Add,
+                    Icon(
+                        imageVector = Icons.Default.Add,
                         contentDescription = "Добавить запись",
 
                         )
@@ -130,7 +130,8 @@ fun NewsScreen(
                         .padding(4.dp)
                         .weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Search,
+                    Icon(
+                        imageVector = Icons.Default.Search,
                         contentDescription = "Поиск",
 
                         )
@@ -138,9 +139,10 @@ fun NewsScreen(
                 }
             }
         }
+        }
 //-------------------------------------------------------------------------------------------------         }
     }
-}
+
 
 
 @Preview(showBackground = true)

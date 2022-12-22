@@ -41,7 +41,7 @@ class NewsViewModel : ViewModel() {
         viewModelScope.launch {
             //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
             val getNews =
-                ApiService.instance?.api?.newsRequest(1,10)
+                ApiService.instance?.api?.newsRequest(1,15)
             getNews?.enqueue(object : Callback<NewsListResponse>{
                 override fun onResponse(
                     call: Call<NewsListResponse>,
