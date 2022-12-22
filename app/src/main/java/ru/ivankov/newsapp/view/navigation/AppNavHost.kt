@@ -24,6 +24,7 @@ fun AppNavHost() {
 //route означает ссылка, в фигурных скобках задаём то, куда она ведёт destination
         composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,vmNews = NewsViewModel())}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,vmNews = NewsViewModel())}
+        composable(AppNavHost.Start.route){ StartScreen(navController = navController,vmNews = NewsViewModel())}
 
     }
 }

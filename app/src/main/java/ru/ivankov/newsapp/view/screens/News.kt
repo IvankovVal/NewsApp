@@ -24,6 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.model.NewsContent
+import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
@@ -62,7 +63,7 @@ fun NewsScreen(
             }
 // ---------------------------------------------------
         }
-// Карточка для кнопок__________________________________________________________________________________
+// -------------------------Карточка со строкой кнопок_______________________________________________
         Card(
 
             shape = RoundedCornerShape(15.dp),
@@ -74,7 +75,7 @@ fun NewsScreen(
                 .fillMaxWidth()
 
         ) {
-//-------------------------------------------------------------------------------------------------
+//----------------------Строка с кнопками--------------------------------------------------
             Row {
 
 
@@ -92,9 +93,10 @@ fun NewsScreen(
                         )
 
                 }
-                //Кнопка профиль
+//----------------------------Кнопка профиль-------------------------------------------
                 IconButton(
-                    onClick = { },
+                    //добавить выбор при условии если token не null переходить сразу в профиль
+                    onClick = { navController.navigate(route = AppNavHost.Start.route) },
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)

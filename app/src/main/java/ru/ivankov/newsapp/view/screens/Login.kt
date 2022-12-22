@@ -73,7 +73,11 @@ fun StartScreen(
                 onClick = { navController.navigate(route = AppNavHost.Registration.route) },
                 modifier = Modifier.padding(30.dp)
             ) { Text(text = "Регистрация") }
-
+//Кнопка возвращения
+            Button(
+                onClick = { navController.navigate(route = AppNavHost.News.route) },
+                modifier = Modifier.padding(30.dp)
+            ) { Text(text = "Назад") }
 
         }
     }
