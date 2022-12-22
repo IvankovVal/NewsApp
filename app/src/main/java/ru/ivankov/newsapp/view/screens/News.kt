@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -13,21 +13,28 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.model.NewsContent
-import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
+import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
 @Composable
-fun NewsScreen(navController: NavHostController) {
-//Расположим карточки с помощью ConstrainLayout
+fun NewsScreen(
+    navController: NavHostController,
+    vmNews: NewsViewModel
+) {
+    val context = LocalContext.current
+    val newsState = vmNews.newsList.observeAsState(listOf())
+    //Расположим карточки с помощью ConstrainLayout
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (newsListCard, buttonsFieldCard) = createRefs()
 
@@ -47,35 +54,13 @@ fun NewsScreen(navController: NavHostController) {
                     bottom.linkTo(buttonsFieldCard.top, 4.dp)
                 }
         ) {
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.Gray)
-                    .padding(4.dp)
-            ) {
-                itemsIndexed(
-                    listOf(
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-                        NewsContent ("Какая-то новость", 1, "", NewsContentTags(1,"Tag"), "Название","ЮID", "Имя пользователя"),
-
-                    )
-                ) { _, item ->
-                    ItemNews(item = item)
+// ----------------------Список новостей-----------------------------
+            LazyColumn {
+                items(newsState.value, key = {it.id}){
+                    ItemNews(item = it)//it указывает на newsState.value
                 }
             }
-
+// ---------------------------------------------------
         }
 // Карточка для кнопок__________________________________________________________________________________
         Card(
@@ -102,14 +87,14 @@ fun NewsScreen(navController: NavHostController) {
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
-                    ) {
+                ) {
                     Icon(imageVector = Icons.Default.Close,
                         contentDescription = "Закрыть",
 
-                    )
+                        )
 
                 }
- //Кнопка профиль
+                //Кнопка профиль
                 IconButton(
                     onClick = { },
                     modifier = Modifier
@@ -138,7 +123,7 @@ fun NewsScreen(navController: NavHostController) {
 
                 }
 
- //Кнопка поиск
+                //Кнопка поиск
                 IconButton(
                     onClick = { },
                     modifier = Modifier
@@ -151,18 +136,19 @@ fun NewsScreen(navController: NavHostController) {
                         )
 
                 }
-                }
             }
+        }
 //-------------------------------------------------------------------------------------------------         }
-        }
-        }
+    }
+}
 
 
 @Preview(showBackground = true)
 @Composable
 fun prevNewsScreen() {
     NewsAppTheme {
-        NewsScreen(navController = rememberNavController())
+        NewsScreen(navController = rememberNavController(), vmNews = NewsViewModel())
 
     }
 }
+

@@ -1,10 +1,5 @@
 package ru.ivankov.newsapp.model
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -17,6 +12,14 @@ interface ApiInterface {
     fun postLogin(
         @Body body: LoginRequest
     ): Call<LoginResponse>
+
+// getNews
+
+    @GET("/api/v1/news?page=1&perPage=8")
+    fun newsRequest(
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int
+    ): Call<NewsListResponse>
 
 
 

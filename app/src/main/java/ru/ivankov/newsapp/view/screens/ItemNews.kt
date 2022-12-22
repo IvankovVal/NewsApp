@@ -44,21 +44,21 @@ fun ItemNews(item: NewsContent) {
 
 // -----------------------------------------------------------------------------------
 }
-@Preview(showBackground = true)
-@Composable
-fun prevItemNews(){
-    NewsAppTheme {
-        ItemNews(item = NewsContent(
-            "Какая-то новость",
-            1,
-            "",
-            NewsContentTags(1,"Tag"),
-            "Название",
-            "ЮID",
-            "Имя пользователя"
-        )
-
-        )
-
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun prevItemNews(){
+//    NewsAppTheme {
+//        ItemNews(item = NewsContent(
+//            "Какая-то новость",
+//            1,
+//            "",
+//            NewsContentTags(1,"Tag"),
+//            "Название",
+//            "ЮID",
+//            "Имя пользователя"
+//        )
+//
+//        )
+//
+//    }
+//}

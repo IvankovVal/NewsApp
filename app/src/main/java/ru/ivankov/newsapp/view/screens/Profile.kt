@@ -1,12 +1,9 @@
 
 package ru.ivankov.newsapp.view.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -19,22 +16,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.R
-import ru.ivankov.newsapp.model.DataLoginResponse
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
 @Composable
-fun MyProfileScreen(
+fun ProfileScreen(
     navController: NavHostController,
-    vmNews: NewsViewModel = viewModel()
+    vmNews: NewsViewModel
 ) {
-  //  val vmNews = viewModel<NewsViewModel>()
+   // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
-   val profileState by vmNews.profileData.collectAsState()
+   val profileState = vmNews._profileData.observeAsState()
 
 
     val userNewsState by vmNews.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
@@ -43,7 +38,7 @@ fun MyProfileScreen(
     androidx.compose.material.Surface(color = Color.White) {
         //Задаём компановку
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (userCard,userNews, AllNewsButton) = createRefs()
+            val (userCard,userNews, AllNewsButton, btnRefresh) = createRefs()
 //Карточка пользователя---------------------------------------------------
             Card(
 
@@ -68,14 +63,14 @@ fun MyProfileScreen(
                 contentDescription = "Аватар пользователя", )
 ////Имя пользователя--------------------------------------------------------------
             Text(
-                text = "${profileState.name }",
+                text = "${profileState?.value?.name }",
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.SemiBold,
                 )
 
 ////Email пользователя------------------------------------------------------------
             Text(
-                text = "$${profileState.email }",
+                text = "${profileState?.value?.email }",
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.SemiBold,
 
@@ -116,48 +111,24 @@ fun MyProfileScreen(
                         bottom.linkTo(parent.bottom, 4.dp)
                     }
             ) {
-                //Содержимое пользовательской карточки
-            }}
+                //Кнопки
+                Button(
+                    onClick = {
+                        vmNews.postAutentification()
+                    },
+                    modifier = Modifier.padding(30.dp)
+                ) { Text(text = "Refresh") }
+            }
 
-////Поле для новостей пользователя-------------------------------------------
-//            Card (
-//                shape = RoundedCornerShape(16.dp),
-//                backgroundColor = Color.Cyan,
-//                border = BorderStroke(2.dp, Color.Gray),
-//                modifier = Modifier.constrainAs(userNews){
-//                    top.linkTo(userAvatar.bottom,16.dp)
-//                    bottom.linkTo(parent.bottom,16.dp)
-//                    start.linkTo(parent.start)
-//                    end.linkTo(parent.end)
-//                }
-//
-//                ){
-////Список новостей пользователя-------------------------------------------
-//                //Атрибуты списка
-////                LazyColumn(contentPadding = PaddingValues(
-////                    top = 16.dp,
-////                    start = 8.dp,
-////                    end = 8.dp,
-////                    bottom = 72.dp
-////                ),
-////                verticalArrangement = Arrangement.spacedBy(8.dp)
-////                    )
-////                //Содержание списка
-////                {
-////                    items(
-////
-////                    )
-////                }
-//            }
-//        }
-//    }
+        }
+
 }}
 
 @Preview(showBackground = true)
 @Composable
 fun prevMyProfileScreen(){
     NewsAppTheme {
-        MyProfileScreen(
+        ProfileScreen(
             navController = rememberNavController(),
             vmNews = NewsViewModel()
         )

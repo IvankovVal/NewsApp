@@ -2,19 +2,16 @@ package ru.ivankov.newsapp.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.ivankov.newsapp.model.*
+import kotlin.random.Random
 
 /*
    * здесь должны быть списки содержащие новости и методы с запросами к серверу на получение данных
@@ -25,31 +22,48 @@ import ru.ivankov.newsapp.model.*
    * */
 class NewsViewModel : ViewModel() {
     //------------------Свойства----------------------------------------------------
-    //Список новостей
-    val newsList: MutableLiveData<ArrayList<NewsContent>> by lazy { MutableLiveData<ArrayList<NewsContent>>() }
-    val newsModel = MutableLiveData<List<NewsContent>>()
 
-     val profileData = MutableStateFlow<DataLoginResponse>(
-        DataLoginResponse(
-            "",
-            "старт email",
-            "0",
-            "Безымянный",
-            "незавидная",
-            "что это?"
-        )
-    )
-    //val _profileData: State<DataLoginResponse> = profileData
+    //Список новостей куда принять
+    private val _newsList: MutableLiveData<List<NewsContent>> by lazy { MutableLiveData<List<NewsContent>>() }
+    //Список который отправим во view
+    val newsList: LiveData<List<NewsContent>> = _newsList
+    init {
+        getNewsList()
+    }
 
-    //val _profileData: StateFlow<DataLoginResponse>(profileData)
-
+    private val profileData = MutableLiveData<DataLoginResponse>()
+    val _profileData: LiveData<DataLoginResponse> = profileData
 
     //------------------Методы----------------------------------------------------
-    //------------------Регистрация----------------------------------------------------
-    fun postRegistration() {
+
+    //------------------Получение списка новостей----------------------------------------------------
+    fun getNewsList() {
         viewModelScope.launch {
+            //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
+            val getNews =
+                ApiService.instance?.api?.newsRequest(1,10)
+            getNews?.enqueue(object : Callback<NewsListResponse>{
+                override fun onResponse(
+                    call: Call<NewsListResponse>,
+                    response: Response<NewsListResponse>
+                ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
+////в случае, если postLogin() выполнится удачно
+
+                    //List<NewsContent>
+                    val answer: List<NewsContent>? = response.body()?.data?.content
+                    _newsList.value = response.body()?.data?.content
+                  //  Log.d(TAG, "Значение профиля - ${response.body()?.data?.content }")
+                }
+
+                override fun onFailure(call: Call<NewsListResponse>, t: Throwable) {
+
+                    Log.d(TAG, "ОШИБКА!!!")
+                }
+            }
+            )
         }
     }
+
     //------------------Аутентификация----------------------------------------------------
     fun postAutentification() {
         viewModelScope.launch {
@@ -63,17 +77,18 @@ class NewsViewModel : ViewModel() {
                 ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
 ////в случае, если postLogin() выполнится удачно
 
-                   profileData.value =
+                    profileData.value =
                         DataLoginResponse(
-                        avatar = response.body()?.data!!.avatar,
-                        email = response.body()?.data!!.email,
-                        id = response.body()?.data!!.id,
-                        name = response.body()?.data!!.name,
-                        role = response.body()?.data!!.role,
-                        token = response.body()?.data!!.token,
-                    )
-                    Log.d(TAG, "Значение профиля - ${profileData.value.name}")
+                            avatar = response.body()?.data!!.avatar,
+                            email = response.body()?.data!!.email,
+                            id = response.body()?.data!!.id,
+                            name = response.body()?.data!!.name,
+                            role = response.body()?.data!!.role,
+                            token = response.body()?.data!!.token,
+                        )
+                    Log.d(TAG, "Значение профиля - ${profileData.value?.name}")
                 }
+
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
 
                     Log.d(TAG, "ОШИБКА!!!")
@@ -82,9 +97,16 @@ class NewsViewModel : ViewModel() {
             )
         }
     }
-    //profileData.
-     //= _profileData
+
+    //------------------Регистрация----------------------------------------------------
+    fun postRegistration() {
+        viewModelScope.launch {
+        }
+    }
+
 }
+
+
 
 
 

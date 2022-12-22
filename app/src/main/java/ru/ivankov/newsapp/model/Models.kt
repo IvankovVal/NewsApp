@@ -22,9 +22,7 @@ data class DataLoginResponse(
     val role: String,
     val token: String,
 )
-
-
-////------------------Модель запроса всех новостей----------------------------------------------------
+// Модель ответа на запрос всех новостей
 data class NewsListResponse(
     var data: NewsData
 )
@@ -38,7 +36,7 @@ data class NewsContent(
     val description: String,
     val id: Int,
     val image: String,
-    val tags: NewsContentTags,
+    val tags: List<NewsContentTags>,
     val title: String,
     val userId: String,
     val username: String
@@ -48,34 +46,11 @@ data class NewsContentTags(
     val id: Int,
     val title: String
 )
-////------------------Модель запроса на авторизацию----------------------------------------------------
-//data class AuthorizationResponse(
-//    val data: AuthorizationDataResponse,
-//    val statusCode: Int,
-//    val success: Boolean
-//)
-//
-//data class AuthorizationDataResponse(
-//    val avatar: String,
-//    val email: String,
-//    val id: String,
-//    val name: String,
-//    val role: String,
-//    val token: String
-//)
-////------------------Модель запроса на логин (вход)----------------------------------------------------
-//data class LoginRequestBody(
-//    val email: String,
-//    val password: String
-//)
-////------------------Модель ответа на регистрацию----------------------------------------------------
-//data class RegistrationRequestBody(
-//    val avatar: String,
-//    val email: String,
-//    val name: String,
-//    val password: String,
-//    val role: String
-//)
+
+
+////------------------Модели для запроса всех новостей----------------------------------------------------
+
+
 ////------------------Модель POST запроса публикации новости------------------------------------------
 //data class PostNewsBody(
 //    val description: String,

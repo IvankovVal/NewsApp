@@ -55,12 +55,13 @@ fun StartScreen(
                 onClick = {
                     vmNews.postAutentification()
                     GlobalScope.launch(Dispatchers.Main) {
-                        delay(3000)
+                        delay(4000)
                         Log.d(
-                        ContentValues.TAG,
-                        "Значение профиля - ${vmNews.profileData.value.name}"
-                    )
-                    navController.navigate(route = AppNavHost.MyProfile.route)}
+                            ContentValues.TAG,
+                            "Значение профиля - ${vmNews._profileData.value?.name}"
+                        )
+                        navController.navigate(route = AppNavHost.MyProfile.route)
+                    }
 
                 },
                 modifier = Modifier.padding(30.dp)
@@ -81,17 +82,16 @@ fun StartScreen(
 }
 
 
-
 //____________________________________________________________________________________________________
 @Preview(showBackground = true)
 @Composable
-fun prevStartScreen(){
+fun prevStartScreen() {
     NewsAppTheme {
         StartScreen(
             navController = rememberNavController(),
             vmNews = NewsViewModel()
 
-            )
+        )
 
     }
 }
