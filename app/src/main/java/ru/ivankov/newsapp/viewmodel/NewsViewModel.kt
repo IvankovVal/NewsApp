@@ -1,16 +1,15 @@
 package ru.ivankov.newsapp.viewmodel
 
+import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.ivankov.newsapp.model.*
+import java.lang.IllegalArgumentException
 import kotlin.random.Random
 
 /*
@@ -20,7 +19,7 @@ import kotlin.random.Random
    * для этого нужно добавить зависимость implementation "androidx.compose.runtime:runtime-livedata:$compose_version"(1.1.1)
 
    * */
-class NewsViewModel : ViewModel() {
+class NewsViewModel(application: Application) : AndroidViewModel(application) {
     //------------------Свойства----------------------------------------------------
 
     //Список новостей куда принять
@@ -106,7 +105,15 @@ class NewsViewModel : ViewModel() {
 
 }
 
-
+//class ViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
+//            return NewsViewModel(application = application) as T
+//        }
+//        throw  IllegalArgumentException("Unknown ViewModel Class")
+//    }
+//
+//}
 
 
 

@@ -1,5 +1,6 @@
 package ru.ivankov.newsapp.view
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.screens.NewsScreen
@@ -23,49 +25,66 @@ import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vmNews = ViewModelProvider(this)[NewsViewModel::class.java]
-
         setContent {
+            NewsAppTheme {
+                val context = LocalContext.current
+                val vmNews = ViewModelProvider(this)[NewsViewModel::class.java]
+                val navController = rememberNavController()
+//                val mViewModel: NewsViewModel =
+//                    viewModel(factory = MainViewModelFactory(context.applicationContext as Application))
 
-            NewsApp()
-        }
-    }
-}
-@Composable
-fun NewsApp() {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (mainCard) = createRefs()
+                ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+                    val (mainCard) = createRefs()
+                    Card(
+                        modifier = Modifier
+                            .constrainAs(mainCard) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }
+                            .fillMaxSize(),
 
-
-        Card(
-            modifier = Modifier
-                .constrainAs(mainCard) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
+                        ) {
+                        AppNavHost(vmNews, navController)
+                    }
                 }
-                .fillMaxSize(),
-
-            ) {
-            AppNavHost()
+            }
         }
-    }
-}
+    }}
+
+//    @Composable
+//    fun NewsApp() {
+//        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+//            val (mainCard) = createRefs()
+//            Card(
+//                modifier = Modifier
+//                    .constrainAs(mainCard) {
+//                        start.linkTo(parent.start)
+//                        end.linkTo(parent.end)
+//                        top.linkTo(parent.top)
+//                        bottom.linkTo(parent.bottom)
+//                    }
+//                    .fillMaxSize(),
+//
+//                ) {
+//                AppNavHost(vmNews, navController)
+//            }
+//        }
+//    }
 
 
-@Preview(showBackground = true)
-@Composable
-fun prevNewsApp() {
-    NewsAppTheme {
-        NewsApp()
-
-    }
-}
+//    @Preview(showBackground = true)
+//    @Composable
+//    fun prevNewsApp() {
+//        NewsAppTheme {
+//            NewsApp()
+//
+//        }
+//    }
 
 //fun CloseApp() {
 //    LocalContext.current  //.finish()

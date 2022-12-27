@@ -25,14 +25,14 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    vmNews: NewsViewModel
+    viewModel: NewsViewModel
 ) {
    // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
-   val profileState = vmNews._profileData.observeAsState()
+   val profileState = viewModel._profileData.observeAsState()
 
 
-    val userNewsState by vmNews.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
+    val userNewsState by viewModel.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
     //основной контейнер(похоже можно было не создавать)
 
     androidx.compose.material.Surface(color = Color.White) {
@@ -114,7 +114,7 @@ fun ProfileScreen(
                 //Кнопки
                 Button(
                     onClick = {
-                        vmNews.postAutentification()
+                        viewModel.postAutentification()
                     },
                     modifier = Modifier.padding(30.dp)
                 ) { Text(text = "Refresh") }
@@ -124,13 +124,14 @@ fun ProfileScreen(
 
 }}
 
-@Preview(showBackground = true)
-@Composable
-fun prevMyProfileScreen(){
-    NewsAppTheme {
-        ProfileScreen(
-            navController = rememberNavController(),
-            vmNews = NewsViewModel()
-        )
-
-    }}
+//@Preview(showBackground = true)
+//@Composable
+//fun prevMyProfileScreen(){
+//    NewsAppTheme {
+//        ProfileScreen(
+//            navController = rememberNavController(),
+//            vmNews = NewsViewModel(),
+//            viewModel = mViewModel
+//        )
+//
+//    }}

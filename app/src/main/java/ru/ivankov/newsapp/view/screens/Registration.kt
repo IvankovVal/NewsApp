@@ -78,15 +78,15 @@ fun RegistrationScreen(navController: NavHostController,
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun prevRegistrationScreen(){
-    NewsAppTheme {
-        RegistrationScreen(
-            navController = rememberNavController(),
-            vmNews = NewsViewModel()
-
-            )
-
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun prevRegistrationScreen(){
+//    NewsAppTheme {
+//        RegistrationScreen(
+//            navController = rememberNavController(),
+//            vmNews = NewsViewModel()
+//
+//            )
+//
+//    }
+//}

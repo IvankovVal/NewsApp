@@ -1,6 +1,7 @@
 package ru.ivankov.newsapp.view.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,14 +18,14 @@ sealed class AppNavHost(val route: String) {
 }
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController) {
     val navController = rememberNavController()
 //в параметры NavHost передать navController, который создан выше и наш стартовый экран
     NavHost(navController = navController, startDestination = AppNavHost.News.route) {
 //route означает ссылка, в фигурных скобках задаём то, куда она ведёт destination
-        composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,vmNews = NewsViewModel())}
-        composable(AppNavHost.News.route){ NewsScreen(navController = navController,vmNews = NewsViewModel())}
-        composable(AppNavHost.Start.route){ StartScreen(navController = navController,vmNews = NewsViewModel())}
+        composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,viewModel = mViewModel)}
+        composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
+        composable(AppNavHost.Start.route){ StartScreen(navController = navController,viewModel = mViewModel)}
 
     }
 }

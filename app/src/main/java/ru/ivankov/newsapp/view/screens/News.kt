@@ -20,10 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -31,10 +29,10 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 @Composable
 fun NewsScreen(
     navController: NavHostController,
-    vmNews: NewsViewModel
+    viewModel: NewsViewModel
 ) {
     val context = LocalContext.current
-    val newsState = vmNews.newsList.observeAsState(listOf())
+    val newsState = viewModel.newsList.observeAsState(listOf())
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
 // Карточка для  отображения новостей---------------------------------------------------------------
@@ -147,12 +145,16 @@ fun NewsScreen(
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun prevNewsScreen() {
-    NewsAppTheme {
-        NewsScreen(navController = rememberNavController(), vmNews = NewsViewModel())
-
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun prevNewsScreen() {
+//    NewsAppTheme {
+//        NewsScreen(
+//            navController = rememberNavController(),
+//            vmNews = NewsViewModel(),
+//            viewModel = mViewModel
+//        )
+//
+//    }
+//}
 
