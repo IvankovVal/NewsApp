@@ -28,6 +28,13 @@ interface ApiInterface {
         @Header("Authorization") token: String
     ): Call<PostNewsResponse>
 
+    //Запрос на редактирование профиля
+    @PUT("/api/v1/user")
+    fun editUserRequest(
+        @Body body: EditUserRequest,
+        @Header("Authorization") token: String
+    ): Call<UserInfoResponse>
+
 
 
 //    @FormUrlEncoded

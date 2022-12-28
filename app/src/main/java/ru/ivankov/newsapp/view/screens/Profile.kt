@@ -115,7 +115,9 @@ fun ProfileScreen(
                     Text(text = "УДАЛИТЬ ПРОФИЛЬ")
                 }
                 //Кнопка редактирования
-                TextButton(onClick = { navController.navigate(route = AppNavHost.News.route) }) {
+                TextButton(onClick = {
+                    viewModel.update_task("","bellator87@mail.ru","Valeriy Urich","${profileState.value?.token}")
+                }) {
                     Text(text = "РЕДАКТИРОВАТЬ ПРОФИЛЬ")
                 }
             }

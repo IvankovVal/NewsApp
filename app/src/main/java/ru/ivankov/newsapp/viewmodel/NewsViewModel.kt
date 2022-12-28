@@ -2,7 +2,6 @@ package ru.ivankov.newsapp.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +59,21 @@ class NewsViewModel : ViewModel() {
 
                     Log.d(TAG, "ОШИБКА!!!")
                 }   } ) } }
+    //--------------Редактирование учётной записи------------------------------------------------------
+
+    fun update_task(avatar: String,email: String, name: String, token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val callUpdateUser: Call<UserInfoResponse>? = ApiService.instance?.api?.editUserRequest(EditUserRequest(avatar,email,name,"user"),token)   //updateMyTask(id,name,status)
+
+            callUpdateUser?.enqueue(object : Callback<UserInfoResponse?> {
+                override fun onResponse(call: Call<UserInfoResponse?>, response: Response<UserInfoResponse?>) {
+                    //Toast.makeText(this,"Задача обновлена",Toast.LENGTH_SHORT).show()
+                }
+                override fun onFailure(call: Call<UserInfoResponse?>, t: Throwable) {
+                    // Toast.makeText(context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
+                }
+            })
+        }}
     //--------------Удаление учётной записи------------------------------------------------------
     fun deleteUser (token:String){
         viewModelScope.launch(Dispatchers.IO) {

@@ -53,7 +53,28 @@ data class PostNewsResponse(
     val codes: List<Int>,
     val timeStamp: String
 )
+//Модель запроса на редактирование профиля
+data class EditUserRequest(
+    val avatar: String,
+    val email: String,
+    val name: String,
+    val role: String
+)
 
+//Модели для ответа на запрос для редактирования профиля
+data class UserInfoResponse(
+    val data: UserInfoDataResponse,
+    val statusCode: Int,
+    val success: Boolean
+)
+
+data class UserInfoDataResponse(
+    val avatar: String,
+    val email: String,
+    val id: String,
+    val name: String,
+    val role: String
+)
 
 ////------------------Модели для запроса всех новостей----------------------------------------------------
 
