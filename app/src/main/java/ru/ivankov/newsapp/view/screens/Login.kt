@@ -50,7 +50,6 @@ fun StartScreen(
                 onClick = {
                     viewModel.postAutentification()
                     GlobalScope.launch(Dispatchers.Main) {
-                        delay(4000)
                         Log.d(
                             ContentValues.TAG,
                             "Значение профиля - ${viewModel._profileData.value?.name}"

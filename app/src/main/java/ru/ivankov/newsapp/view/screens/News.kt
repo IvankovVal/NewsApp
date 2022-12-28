@@ -76,21 +76,6 @@ fun NewsScreen(
 //----------------------Строка с кнопками--------------------------------------------------
             Row {
 
-
-                //Кнопка закрыть
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Закрыть",
-
-                        )
-
-                }
 //----------------------------Кнопка профиль-------------------------------------------
                 IconButton(
                     //добавить выбор при условии если token не null переходить сразу в профиль
@@ -145,16 +130,15 @@ fun NewsScreen(
 
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun prevNewsScreen() {
-//    NewsAppTheme {
-//        NewsScreen(
-//            navController = rememberNavController(),
-//            vmNews = NewsViewModel(),
-//            viewModel = mViewModel
-//        )
-//
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun prevNewsScreen() {
+    NewsAppTheme {
+        NewsScreen(
+            navController = rememberNavController(),
+            viewModel = NewsViewModel()
+        )
+
+    }
+}
 

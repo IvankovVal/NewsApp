@@ -1,16 +1,16 @@
 package ru.ivankov.newsapp.viewmodel
 
-import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.ivankov.newsapp.model.*
-import java.lang.IllegalArgumentException
-import kotlin.random.Random
 
 /*
    * здесь должны быть списки содержащие новости и методы с запросами к серверу на получение данных
@@ -59,9 +59,25 @@ class NewsViewModel : ViewModel() {
                 override fun onFailure(call: Call<NewsListResponse>, t: Throwable) {
 
                     Log.d(TAG, "ОШИБКА!!!")
+                }   } ) } }
+    //--------------Удаление учётной записи------------------------------------------------------
+    fun deleteUser (token:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val callDeleteUser: Call<PostNewsResponse>? = ApiService.instance?.api?.deleteUser(token)
+
+            callDeleteUser?.enqueue(object : Callback<PostNewsResponse?> {//enqueue - "поставить в очередь"
+                override fun onResponse(
+                call: Call<PostNewsResponse?>,
+                response: Response<PostNewsResponse?>
+            ) {
+                    Log.d("deleteUser", "Профиль удалён")
+                    profileData.value = null
                 }
-            }
-            )
+
+                override fun onFailure(call: Call<PostNewsResponse?>, t: Throwable) {
+                    Log.d("deleteUser", "С удалением что-то пошло не так")
+                }
+            })
         }
     }
 
@@ -104,6 +120,7 @@ class NewsViewModel : ViewModel() {
         viewModelScope.launch {
         }
     }
+
 
 }
 

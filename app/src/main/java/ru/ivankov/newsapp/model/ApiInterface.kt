@@ -6,20 +6,27 @@ import retrofit2.http.*
 //(2) interface ApiInterface. Описывает методы взаимодействия с конечными точками
 interface ApiInterface {
 
-// postLogin
+// Запрос на вход в профиль
 
     @POST("/api/v1/auth/login")
     fun postLogin(
         @Body body: LoginRequest
     ): Call<LoginResponse>
 
-// getNews
+// Запрос на получение новостей
 
     @GET("/api/v1/news")
     fun newsRequest(
         @Query("page") page: Int,
         @Query("perPage") perPage: Int
     ): Call<NewsListResponse>
+
+//Запрос на удаление профиля
+
+    @DELETE("https://news-feed.dunice-testing.com/api/v1/user")
+    fun deleteUser(
+        @Header("Authorization") token: String
+    ): Call<PostNewsResponse>
 
 
 

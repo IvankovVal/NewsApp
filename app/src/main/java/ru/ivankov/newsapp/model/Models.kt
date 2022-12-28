@@ -46,6 +46,13 @@ data class NewsContentTags(
     val id: Int,
     val title: String
 )
+//Удаление пользователя
+data class PostNewsResponse(
+    val success: Boolean,
+    val statusCode: Int,
+    val codes: List<Int>,
+    val timeStamp: String
+)
 
 
 ////------------------Модели для запроса всех новостей----------------------------------------------------
