@@ -19,7 +19,9 @@ import kotlin.random.Random
    * для этого нужно добавить зависимость implementation "androidx.compose.runtime:runtime-livedata:$compose_version"(1.1.1)
 
    * */
-class NewsViewModel(application: Application) : AndroidViewModel(application) {
+
+//class NewsViewModel(application: Application) : AndroidViewModel(application) {
+class NewsViewModel : ViewModel() {
     //------------------Свойства----------------------------------------------------
 
     //Список новостей куда принять
