@@ -39,87 +39,44 @@ fun BlackSheet (
     // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
     val profileState = viewModel._profileData.observeAsState()
-    val newsState = viewModel.newsList.observeAsState(listOf())
-    val userNewsState by viewModel.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
-    //основной контейнер(похоже можно было не создавать)
     Column()
     {
-        //Карточка пользователя
-        Box(modifier = Modifier.background(Color.White).fillMaxWidth().weight(2f)){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(10.dp)
-                ) {
- //-------------  Аватар----------------------------------------------------------------------------
+        //Выбор аватара
+        Box(modifier = Modifier
+            .background(Color.White)
+            .fillMaxWidth()
+            .weight(2f)) {
 
-                    AsyncImage(
-                        model = profileState.value?.avatar,
-                        contentDescription = "Аватар",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                    )
-                    Card(
-                        shape = RoundedCornerShape(20.dp),
-                        elevation = 5.dp,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .border(3.dp, Color.DarkGray, RoundedCornerShape(20.dp))
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceAround,
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .background(Color.Gray)
-                        ) {
-////Имя пользователя--------------------------------------------------------------
-                            Text(
-                                text = "${profileState.value?.name}",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Monospace,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp, start = 20.dp, end = 20.dp)
-                            )
-////Email пользователя------------------------------------------------------------
-                            Text(
-                                text = "${profileState.value?.email}",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Monospace,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 5.dp, start = 20.dp, end = 20.dp)
-                            )
-                        }
-                    }
+
+        }
+        //Поля для правки пользователя
+        Box(modifier = Modifier
+            .background(Color.Yellow)
+            .fillMaxWidth()
+            .weight(5f)) {
+
+
+        }
+//Кнопки назад и сохранить--------------------------------------------------------------------------
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .weight(0.5f)
+        ) {
+            Row() {
+                TextButton(onClick = { navController.navigate(route = AppNavHost.News.route) }) {
+                    Text(text = "ОТМЕНИТЬ")
+                }
+                TextButton(onClick = { navController.navigate(route = AppNavHost.News.route) }) {
+                    Text(text = "СОХРАНИТЬ")
                 }
             }
-        //Новости пользователя
-        Box(modifier = Modifier.background(Color.Yellow).fillMaxWidth().weight(5f)){
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.White)
-                    .padding(4.dp)
-            ) {
-                items(newsState.value, key = {it.id}){
-                    ItemNews(item = it)//it указывает на newsState.value
-                }
-            }
+
         }
-        //Кнопка назад
-        Box(contentAlignment = Alignment.Center,
-            modifier = Modifier.background(Color.White).fillMaxWidth().weight(0.5f)){
-            //Кнопки
-            TextButton(onClick = { navController.navigate(route = AppNavHost.News.route) }) {
-                Text(text = "ВСЕ НОВОСТИ")
-            }
-        }
-    }}
+    }
+}
 
 
 @Preview

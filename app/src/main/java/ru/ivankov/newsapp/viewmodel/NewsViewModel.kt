@@ -4,12 +4,17 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.ivankov.newsapp.model.*
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 /*
    * здесь должны быть списки содержащие новости и методы с запросами к серверу на получение данных
@@ -31,10 +36,43 @@ class NewsViewModel : ViewModel() {
         getNewsList()
     }
 
-    private val profileData = MutableLiveData<DataLoginResponse>()
+    val profileData = MutableLiveData<DataLoginResponse>()
     val _profileData: LiveData<DataLoginResponse> = profileData
 
     //------------------Методы----------------------------------------------------
+    //-------------Регистрация - добавление пользователя-------------------------------------------
+    fun postRegistration() {
+        viewModelScope.launch {
+            val jsonObject = JSONObject()
+            jsonObject.put("avatar", "")
+            jsonObject.put("email", "trikadim@mail.ru")
+            jsonObject.put("name", "Nikadim")
+            jsonObject.put("password", "198725")
+            jsonObject.put("role", "user")
+            val jsonObjectString = jsonObject.toString()
+            GlobalScope.launch(Dispatchers.IO) {
+                val url = URL("https://news-feed.dunice-testing.com/api/v1/auth/register")
+                val httpsURLConnection = url.openConnection() as HttpsURLConnection
+                httpsURLConnection.requestMethod = "POST"
+                httpsURLConnection.setRequestProperty("Content-Type", "application/json")
+                httpsURLConnection.setRequestProperty("Accept", "application/json")
+                httpsURLConnection.doInput = true
+                httpsURLConnection.doOutput = true
+                val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
+                outputStreamWriter.write(jsonObjectString)
+                outputStreamWriter.flush()
+                val responseCode = httpsURLConnection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK ) {
+                    Log.d("Reg", "${responseCode }")
+
+                }
+                if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST ) {
+                    Log.d("Reg", "${responseCode }")}
+                else {
+                }
+            }
+        }
+    }
 
     //------------------Получение списка новостей----------------------------------------------------
     fun getNewsList() {
@@ -61,7 +99,7 @@ class NewsViewModel : ViewModel() {
                 }   } ) } }
     //--------------Редактирование учётной записи------------------------------------------------------
 
-    fun update_task(avatar: String,email: String, name: String, token: String) {
+    fun updateUser(avatar: String, email: String, name: String, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val callUpdateUser: Call<UserInfoResponse>? = ApiService.instance?.api?.editUserRequest(EditUserRequest(avatar,email,name,"user"),token)   //updateMyTask(id,name,status)
 
@@ -96,11 +134,11 @@ class NewsViewModel : ViewModel() {
     }
 
     //------------------Аутентификация----------------------------------------------------
-    fun postAutentification() {
+    fun postAutentification(email: String, password: String) {
         viewModelScope.launch {
             //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
             val postLogin =
-                ApiService.instance?.api?.postLogin(LoginRequest("bellator87@mail.ru", "198727"))
+                ApiService.instance?.api?.postLogin(LoginRequest(email, password))
             postLogin?.enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(
                     call: Call<LoginResponse>,
@@ -129,11 +167,6 @@ class NewsViewModel : ViewModel() {
         }
     }
 
-    //------------------Регистрация----------------------------------------------------
-    fun postRegistration() {
-        viewModelScope.launch {
-        }
-    }
 
 
 }

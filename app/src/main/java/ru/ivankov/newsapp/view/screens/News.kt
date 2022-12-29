@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -33,6 +32,8 @@ fun NewsScreen(
 ) {
     val context = LocalContext.current
     val newsState = viewModel.newsList.observeAsState(listOf())
+    val profileState = viewModel._profileData.observeAsState()
+
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
 // Карточка для  отображения новостей---------------------------------------------------------------
@@ -79,7 +80,11 @@ fun NewsScreen(
 //----------------------------Кнопка профиль-------------------------------------------
                 IconButton(
                     //добавить выбор при условии если token не null переходить сразу в профиль
-                    onClick = { navController.navigate(route = AppNavHost.Start.route) },
+                    onClick = {
+                        if(  profileState.value == null ){
+                        navController.navigate(route = AppNavHost.Login.route)}
+                        else navController.navigate(route = AppNavHost.MyProfile.route)
+                              },
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)

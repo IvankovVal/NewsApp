@@ -35,6 +35,12 @@ interface ApiInterface {
         @Header("Authorization") token: String
     ): Call<UserInfoResponse>
 
+    //Запрос на регистрацию
+    @POST("/api/v1/auth/register")
+    fun addUserRequest(
+        @Body body: registrationRequest
+    ): Call<AuthorizationResponse>
+
 
 
 //    @FormUrlEncoded

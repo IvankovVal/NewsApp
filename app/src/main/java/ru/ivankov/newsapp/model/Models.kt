@@ -76,6 +76,28 @@ data class UserInfoDataResponse(
     val role: String
 )
 
+//Модель запроса на регистрацию
+data class registrationRequest(
+    val avatar: String,
+    val email: String,
+    val name: String,
+    val password: String,
+    val role: String
+)
+data class AuthorizationResponse(
+    val data: AuthorizationDataResponse,
+    val statusCode: Int,
+    val success: Boolean
+)
+data class AuthorizationDataResponse(
+    val avatar: String,
+    val email: String,
+    val id: String,
+    val name: String,
+    val role: String,
+    val token: String
+)
+
 ////------------------Модели для запроса всех новостей----------------------------------------------------
 
 
