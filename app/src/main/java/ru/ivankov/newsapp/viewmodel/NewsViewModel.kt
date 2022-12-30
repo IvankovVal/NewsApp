@@ -44,7 +44,7 @@ class NewsViewModel : ViewModel() {
     fun postRegistration() {
         viewModelScope.launch {
             val jsonObject = JSONObject()
-            jsonObject.put("avatar", "")
+            jsonObject.put("avatar", "any string")
             jsonObject.put("email", "trikadim@mail.ru")
             jsonObject.put("name", "Nikadim")
             jsonObject.put("password", "198725")
