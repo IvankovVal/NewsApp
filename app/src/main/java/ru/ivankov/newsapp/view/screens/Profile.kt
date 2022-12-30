@@ -34,7 +34,7 @@ fun ProfileScreen(
 ) {
     // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
-    val profileState = viewModel._profileData.observeAsState()
+    val profileState = viewModel.profileData.observeAsState()
     val newsState = viewModel.newsList.observeAsState(listOf())
     val userNewsState by viewModel.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
     //основной контейнер(похоже можно было не создавать)
@@ -122,7 +122,7 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f)
 
                 ) {
-                    Text(text = "УДАЛИТЬ ПРОФИЛЬ")
+                    Text(text = "УДАЛИТЬ")
                 }
                 if (openDeleteUserDialog.value) {
                     //Вызываем диалог
@@ -231,7 +231,7 @@ fun ProfileScreen(
                 }
 //Кнопка выхода из учётной записи-------------------------------------------------------------------------
                 TextButton(onClick = {
-                    viewModel.profileData.value = null
+                    viewModel._profileData.value = null
                        navController.navigate(route = AppNavHost.News.route)
                 },
                 modifier = Modifier.weight(1f))

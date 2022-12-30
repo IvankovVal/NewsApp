@@ -32,7 +32,7 @@ fun NewsScreen(
 ) {
     val context = LocalContext.current
     val newsState = viewModel.newsList.observeAsState(listOf())
-    val profileState = viewModel._profileData.observeAsState()
+    val profileState = viewModel.profileData.observeAsState()
 
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы

@@ -36,18 +36,23 @@ class NewsViewModel : ViewModel() {
         getNewsList()
     }
 
-    val profileData = MutableLiveData<DataLoginResponse>()
-    val _profileData: LiveData<DataLoginResponse> = profileData
+    val _profileData = MutableLiveData<DataLoginResponse>()
+    val profileData: LiveData<DataLoginResponse> = _profileData
 
     //------------------Методы----------------------------------------------------
     //-------------Регистрация - добавление пользователя-------------------------------------------
-    fun postRegistration() {
+    fun postRegistration(
+        avatar: String,
+        email: String,
+        name: String,
+        password: String
+    ) {
         viewModelScope.launch {
             val jsonObject = JSONObject()
-            jsonObject.put("avatar", "any string")
-            jsonObject.put("email", "trikadim@mail.ru")
-            jsonObject.put("name", "Nikadim")
-            jsonObject.put("password", "198725")
+            jsonObject.put("avatar", avatar)
+            jsonObject.put("email", email)
+            jsonObject.put("name", name)
+            jsonObject.put("password", password)
             jsonObject.put("role", "user")
             val jsonObjectString = jsonObject.toString()
             GlobalScope.launch(Dispatchers.IO) {
@@ -123,7 +128,7 @@ class NewsViewModel : ViewModel() {
                 response: Response<PostNewsResponse?>
             ) {
                     Log.d("deleteUser", "Профиль удалён")
-                    profileData.value = null
+                    _profileData.value = null
                 }
 
                 override fun onFailure(call: Call<PostNewsResponse?>, t: Throwable) {
@@ -134,7 +139,7 @@ class NewsViewModel : ViewModel() {
     }
 
     //------------------Аутентификация----------------------------------------------------
-    fun postAutentification(email: String, password: String) {
+    fun postAuthentification(email: String, password: String) {
         viewModelScope.launch {
             //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
             val postLogin =
@@ -146,7 +151,7 @@ class NewsViewModel : ViewModel() {
                 ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
 ////в случае, если postLogin() выполнится удачно
 
-                    profileData.value =
+                    _profileData.value =
                         DataLoginResponse(
                             avatar = response.body()?.data!!.avatar,
                             email = response.body()?.data!!.email,

@@ -3,10 +3,7 @@ package ru.ivankov.newsapp.view.screens
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,57 +30,56 @@ fun LoginScreen(
     //authorizationResponse - состояние страницы. При его изменении должна происходить рекомпозиция
     //val enterState = vmNews.profileData?.collectAsState()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            TextField(
-                value = loginEmailState.value,
-                onValueChange = { loginEmailState.value = it },
-                label = { Text("Enter email") })
+        TextField(
+            value = loginEmailState.value,
+            onValueChange = { loginEmailState.value = it },
+            label = { Text("Enter email") })
 
-            TextField(
-                value = loginPasswordState.value,
-                onValueChange = { loginPasswordState.value = it },
-                label = { Text("Enter password") })
-            Row {
-                //Кнопка входа
-                Button(
-                    onClick = {
-                        viewModel.postAutentification(loginEmailState.value,loginPasswordState.value)
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.d(
-                                ContentValues.TAG,
-                                "Значение профиля - ${viewModel._profileData.value?.name}"
-                            )
-                            navController.navigate(route = AppNavHost.MyProfile.route)
-                        }
+        TextField(
+            value = loginPasswordState.value,
+            onValueChange = { loginPasswordState.value = it },
+            label = { Text("Enter password") })
+        Row {
+            //Кнопка входа
+            TextButton(
+                onClick = {
+                    viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value)
+                    GlobalScope.launch(Dispatchers.Main) {
+                        Log.d(
+                            ContentValues.TAG,
+                            "Значение профиля - ${viewModel.profileData.value?.name}"
+                        )
+                        navController.navigate(route = AppNavHost.MyProfile.route)
+                    }
 
-                    },
-                    modifier = Modifier.padding(30.dp)
-                ) { Text(text = "Вход") }
+                },
+                modifier = Modifier.weight(1f)
+            ) { Text(text = "ВХОД") }
 
 
 //Кнопка регистрации
-                Button(
-                    onClick = { navController.navigate(route = AppNavHost.Registration.route) },
-                    modifier = Modifier.padding(30.dp)
-                ) { Text(text = "Регистрация") }
-//Кнопка возвращения
-                Button(
-                    onClick = { navController.navigate(route = AppNavHost.News.route) },
-                    modifier = Modifier.padding(30.dp)
-                ) { Text(text = "Назад") }
-            }
-        }
+            TextButton(
+                onClick = { navController.navigate(route = AppNavHost.Registration.route) },
+                modifier = Modifier.weight(1f)
+            ) { Text(text = "РЕГИСТРАЦИЯ") }
 
+//Кнопка возвращения
+            TextButton(
+                onClick = { navController.navigate(route = AppNavHost.News.route) },
+                modifier = Modifier.weight(1f)
+            ) { Text(text = "НАЗАД") }
 
         }
     }
+
+
+}
 
 //____________________________________________________________________________________________________
 @Preview(showBackground = true)

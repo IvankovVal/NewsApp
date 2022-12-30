@@ -1,6 +1,5 @@
 package ru.ivankov.newsapp.view.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -8,6 +7,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +30,12 @@ fun RegistrationScreen(
 ) {
 
     val context = LocalContext.current
-    val profileState = viewModel._profileData.observeAsState()
+    val profileState = viewModel.profileData.observeAsState()
+    val registrationNameState = remember { mutableStateOf("") }
+    val registrationEmailState = remember { mutableStateOf("") }
+    val registrationPasswordState = remember { mutableStateOf("") }
+    val requestState = remember { mutableStateOf("") }
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,7 +50,7 @@ fun RegistrationScreen(
                 .weight(3f),
             contentAlignment = Alignment.Center
         ) {
-            //Тут должнобыть что-то про выбор аватара
+            Text(text = "$requestState" )
         }
 // Поле имени, email и пароля_______________________________________________________________________
         Box(
@@ -56,11 +62,24 @@ fun RegistrationScreen(
         ) {
             Column {
 
-
-                TextField(value = "Имя", onValueChange = {}, modifier = Modifier.padding(12.dp))
-                TextField(value = "Email", onValueChange = {}, modifier = Modifier.padding(12.dp))
-                TextField(value = "Пароль", onValueChange = {}, modifier = Modifier.padding(12.dp))
-
+                TextField(
+                    value = registrationNameState.value,
+                    onValueChange = { registrationNameState.value = it },
+                    label = { Text("Enter name") },
+                    modifier = Modifier.padding(12.dp)
+                )
+                TextField(
+                    value = registrationEmailState.value,
+                    onValueChange = { registrationEmailState.value = it },
+                    label = { Text("Enter email") },
+                    modifier = Modifier.padding(12.dp)
+                )
+                TextField(
+                    value = registrationPasswordState.value,
+                    onValueChange = { registrationPasswordState.value = it },
+                    label = { Text("Enter password") },
+                    modifier = Modifier.padding(12.dp)
+                )
 
             }
         }
@@ -78,12 +97,13 @@ fun RegistrationScreen(
                 TextButton(
                     onClick = {
                         viewModel.postRegistration(
-//                            "",
-//                            "nikadim@mail.ru",
-//                            "Nikadim",
-//                            "198726"
+                            "any",
+                            registrationEmailState.value,
+                            registrationNameState.value,
+                            registrationPasswordState.value
                         )
-                        navController.navigate(route = AppNavHost.Login.route)
+                        requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
+                              navController.navigate(route = AppNavHost.Login.route)
                     },
                     modifier = Modifier.padding(12.dp)
                 )
@@ -99,6 +119,7 @@ fun RegistrationScreen(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun prevRegistrationScreen() {
