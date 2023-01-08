@@ -1,6 +1,7 @@
 package ru.ivankov.newsapp.view.screens
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,12 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.model.NewsContentTags
+import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 
 @Composable
-fun ItemNews(item: NewsContent) {
+fun ItemNews(
+    item: NewsContent,
+    navController: NavHostController
+    ) {
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка__________________________________________________________________________________
     Card(
@@ -25,6 +31,7 @@ fun ItemNews(item: NewsContent) {
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp,
         modifier = Modifier
+            .clickable { navController.navigate(route = AppNavHost.MyProfile.route) }
             .padding(start = 5.dp, end = 5.dp)
             .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
             .fillMaxWidth()

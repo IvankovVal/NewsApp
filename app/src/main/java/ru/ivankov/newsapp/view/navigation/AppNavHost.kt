@@ -23,7 +23,7 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController) {
 //в параметры NavHost передать navController, который создан выше и наш стартовый экран
     NavHost(navController = navController, startDestination = AppNavHost.News.route) {
 //route означает ссылка, в фигурных скобках задаём то, куда она ведёт destination
-        composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,viewModel = mViewModel)}
+        composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,viewModel = mViewModel, user = mViewModel.profileData.value!!.name)}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController,viewModel = mViewModel) }

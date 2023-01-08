@@ -2,8 +2,10 @@ package ru.ivankov.newsapp.view.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,9 +22,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -30,13 +37,16 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
+    user: String
 ) {
     // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
     val profileState = viewModel.profileData.observeAsState()
     val newsState = viewModel.newsList.observeAsState(listOf())
-    val userNewsState by viewModel.newsList.observeAsState() //Добавить позже фильтр на пользовательские новости
+    val pageState = viewModel.newsList.value!!.size/15   //pageAmount.observeAsState()
+
+
     //основной контейнер(похоже можно было не создавать)
     val openDeleteUserDialog = remember { mutableStateOf(false) }
     val openEditUserDialog = remember { mutableStateOf(false) }
@@ -184,7 +194,9 @@ fun ProfileScreen(
                             Column() {
                                 TextField(
                                     value = editNameState.value,
-                                    onValueChange = { editNameState.value = it })
+                                    onValueChange = { editNameState.value = it }
+//                                    label = { Text("Новое имя") })
+                                )
                                 TextField(
                                     value = editEmailState.value,
                                     onValueChange = { editEmailState.value = it })
@@ -238,12 +250,43 @@ fun ProfileScreen(
                 {Text(text = "ВЫХОД") }
 
             }}
-            //Новости пользователя---------------------------------------------------------------------
+        // -------------------------Строка страниц_______________________________________________
+
+
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 5.dp, end = 5.dp)
+                .fillMaxWidth()
+
+        ) {
+            items(count = Math.ceil(pageState.toDouble()).toInt() + 1 )
+            {
+                Text(
+                    text = "стр ${it + 1}",
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .clickable {
+                            viewModel.searchNews(
+                                it + 1,
+                                15,
+                                "${viewModel.profileData.value?.name}",
+                                "",
+                                emptyList()
+
+                            )
+                        }
+                        .padding(8.dp)
+                )
+            }
+        }
+  //Новости пользователя------------------------------------------------------------------
             Box(
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxWidth()
-                    .weight(6f)
+                    .weight(5f)
             ) {
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -253,7 +296,7 @@ fun ProfileScreen(
                         .padding(4.dp)
                 ) {
                     items(newsState.value, key = { it.id }) {
-                        ItemNews(item = it)//it указывает на newsState.value
+                        ItemNews(item = it,navController)//it указывает на newsState.value
                     }
                 }
             }
@@ -266,22 +309,29 @@ fun ProfileScreen(
                     .weight(0.5f)
             ) {
                 //Кнопки
-                TextButton(onClick = { navController.navigate(route = AppNavHost.News.route) }) {
+                TextButton(onClick = {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        delay(1000)
+//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
+                        viewModel.getNewsList(1)
+                        navController.navigate(route = AppNavHost.News.route) }
+                }) {
                     Text(text = "ВСЕ НОВОСТИ")
                 }
             }
         }
     }
-    @Preview(showBackground = true)
-    @Composable
-    fun prevMyProfileScreen() {
-        NewsAppTheme {
-            ProfileScreen(
-                navController = rememberNavController(),
-                viewModel = NewsViewModel()
-            )
-        }
-    }
+//    @Preview(showBackground = true)
+//    @Composable
+//    fun prevMyProfileScreen() {
+//        NewsAppTheme {
+//            ProfileScreen(
+//                navController = rememberNavController(),
+//                viewModel = NewsViewModel(),
+//                user = viewModel
+//            )
+//        }
+//    }
 
 
 

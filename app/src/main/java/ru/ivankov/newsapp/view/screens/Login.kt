@@ -50,10 +50,16 @@ fun LoginScreen(
             TextButton(
                 onClick = {
                     viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value)
-                    GlobalScope.launch(Dispatchers.Main) {
-                        Log.d(
-                            ContentValues.TAG,
-                            "Значение профиля - ${viewModel.profileData.value?.name}"
+                   GlobalScope.launch(Dispatchers.Main) {
+                       delay(1000)
+//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
+                        viewModel.searchNews(
+                            1,
+                            15,
+                             "${viewModel.profileData.value?.name}",//"${viewModel.profileData.value?.name}",//дать автора
+                            "",
+                            emptyList()
+
                         )
                         navController.navigate(route = AppNavHost.MyProfile.route)
                     }
@@ -71,7 +77,10 @@ fun LoginScreen(
 
 //Кнопка возвращения
             TextButton(
-                onClick = { navController.navigate(route = AppNavHost.News.route) },
+                onClick = {
+                    viewModel.getNewsList(1)
+                    navController.navigate(route = AppNavHost.News.route)
+                          },
                 modifier = Modifier.weight(1f)
             ) { Text(text = "НАЗАД") }
 

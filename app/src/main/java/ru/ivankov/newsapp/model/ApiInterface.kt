@@ -41,6 +41,21 @@ interface ApiInterface {
         @Body body: registrationRequest
     ): Call<AuthorizationResponse>
 
+    //Поиск новости по параметрам (автор, слово, тэг)
+    @GET("api/v1/news/find")
+    fun findNews(
+        @Query("page") page: Int,
+        @Query("perPage") perPage: Int,
+        @Query("author") author: String? = null,
+        @Query("keywords") keywords: String? = null,
+        @Query("tags") tags: List<String>? = null
+    ): Call<NewsData>
+
+    @POST("/api/v1/news")
+    fun postNews(
+        @Body body: PostNewsBody,
+        @Header("Authorization") token: String
+    ): Call<PostNewsResponse>
 
 
 //    @FormUrlEncoded

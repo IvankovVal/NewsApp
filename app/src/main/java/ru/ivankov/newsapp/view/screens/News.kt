@@ -1,9 +1,12 @@
 package ru.ivankov.newsapp.view.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,14 +16,23 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import ru.ivankov.newsapp.model.NewsContentTags
+import ru.ivankov.newsapp.model.PostNewsBody
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -33,9 +45,45 @@ fun NewsScreen(
     val context = LocalContext.current
     val newsState = viewModel.newsList.observeAsState(listOf())
     val profileState = viewModel.profileData.observeAsState()
+    val pageState = viewModel.pageAmount.observeAsState()
+    //состояние диалогов
+    val openFindNewsDialog = remember { mutableStateOf(false) }
+    val openCreateNewsDialog = remember { mutableStateOf(false) }
+    //состояние полей при поиске
+    val editAuthorState = remember { mutableStateOf("") }
+    val editWordState = remember { mutableStateOf("") }
+    val editTagState = remember { mutableStateOf("") }
+    //состояние полей при создании новости
+    val editTitleState = remember { mutableStateOf("") }
+    val editDescriptionState = remember { mutableStateOf("") }
+    val editTagsOnCreateState = remember { mutableStateOf("") }
 
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
+        // -------------------------Строкав страниц_______________________________________________
+
+
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 5.dp, end = 5.dp)
+                .fillMaxWidth()
+
+        ) {
+            items(count = pageState.value!!.toInt())
+            {
+                Text(
+                    text = "стр ${it + 1}",
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .clickable { viewModel.getNewsList(it + 1) }
+                        .padding(8.dp)
+                )
+            }
+        }
+
+
 // Карточка для  отображения новостей---------------------------------------------------------------
         Card(
 
@@ -56,8 +104,8 @@ fun NewsScreen(
                     .background(color = Color.Gray)
                     .padding(4.dp)
             ) {
-                items(newsState.value, key = {it.id}){
-                    ItemNews(item = it)//it указывает на newsState.value
+                items(newsState.value, key = { it.id }) {
+                    ItemNews(item = it,navController = navController)//it указывает на newsState.value
                 }
             }
 // ---------------------------------------------------
@@ -81,10 +129,22 @@ fun NewsScreen(
                 IconButton(
                     //добавить выбор при условии если token не null переходить сразу в профиль
                     onClick = {
-                        if(  profileState.value == null ){
-                        navController.navigate(route = AppNavHost.Login.route)}
-                        else navController.navigate(route = AppNavHost.MyProfile.route)
-                              },
+                        if (profileState.value == null) {
+                            navController.navigate(route = AppNavHost.Login.route)
+                        } else{
+                            GlobalScope.launch(Dispatchers.Main) {
+                                delay(1000)
+//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
+                                viewModel.searchNews(
+                                    1,
+                                    15,
+                                    "${viewModel.profileData.value?.name}",//"${viewModel.profileData.value?.name}",//дать автора
+                                    "",
+                                    emptyList()
+                                )
+                                navController.navigate(route = AppNavHost.MyProfile.route)}
+                            }
+                    },
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
@@ -98,9 +158,14 @@ fun NewsScreen(
                 }
 
 
-//Кнопка добавить запись
+//Кнопка добавить запись---------------------------------------
                 IconButton(
-                    onClick = { },
+                    onClick = {if(profileState.value != null)
+                        openCreateNewsDialog.value = true
+                        else
+                    Toast.makeText(context, "Войдите в профиль", Toast.LENGTH_LONG).show()
+
+                    },
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
@@ -112,10 +177,73 @@ fun NewsScreen(
                         )
 
                 }
+                //тут диалог
+                if (openCreateNewsDialog.value) {
+                    //Вызываем диалог
+//--------------------------------------Alert dialog при добавлении новости-----------------------------
+                    AlertDialog(onDismissRequest = { openCreateNewsDialog.value = false },
+                        title = { Text(text = "Добавить новость") },
+                        text = {
+                            Column() {
+                                TextField(
+                                    value = editTitleState.value,
+                                    onValueChange = { editTitleState.value = it },
+                                    label = { Text("Название") })
 
-                //Кнопка поиск
+
+                                TextField(
+                                    value = editDescriptionState.value,
+                                    onValueChange = { editDescriptionState.value = it },
+                                    label = { Text("Содержание") })
+                                TextField(
+                                    value = editTagsOnCreateState.value,
+                                    onValueChange = { editTagsOnCreateState.value = it },
+                                    label = { Text("tags") })
+                            }
+
+                        },
+
+                        buttons = {
+                            Row(
+                                modifier = Modifier.padding(all = 8.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+//Кнопка создать в диалоге-------------------------------------------------------------------------
+
+                                TextButton(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        viewModel.insertNews(
+                                            editDescriptionState.value,
+                                            "any image",
+                                            emptyList(),
+                                            editTitleState.value
+                                        )
+                                        openCreateNewsDialog.value = false
+                                    }
+                                ) {
+                                    Text("Создать")
+                                }
+//Кнопка отмены создания в диалоге------------------------------------------------------------------
+                                TextButton(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        openCreateNewsDialog.value = false
+                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                ) {
+                                    Text("Отмена")
+                                }
+                            }
+
+                        }
+                    )}
+//-----------------------Конец Alert Dialog---------------------------------------------------------
+
+//----------------------Кнопка поиск---------------------------------------
                 IconButton(
-                    onClick = { },
+                    onClick = { openFindNewsDialog.value = true },
                     modifier = Modifier
                         .padding(4.dp)
                         .weight(1f)
@@ -127,12 +255,77 @@ fun NewsScreen(
                         )
 
                 }
+                if (openFindNewsDialog.value) {
+                    //Вызываем диалог
+//--------------------------------------Alert dialog при поиске новости-----------------------------
+                    AlertDialog(onDismissRequest = { openFindNewsDialog.value = false },
+                        title = { Text(text = "Найти новость") },
+                        text = {
+                            Column() {
+                                TextField(
+                                    value = editAuthorState.value,
+                                    onValueChange = { editAuthorState.value = it },
+                                    label = { Text("Автор") })
+
+
+                                TextField(
+                                    value = editWordState.value,
+                                    onValueChange = { editWordState.value = it },
+                                    label = { Text("Ключевые слова") })
+                                TextField(
+                                    value = editTagState.value,
+                                    onValueChange = { editTagState.value = it },
+                                    label = { Text("tags") })
+                            }
+
+                        },
+
+                        buttons = {
+                            Row(
+                                modifier = Modifier.padding(all = 8.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+//Кнопка редактирования в диалоге-------------------------------------------------------------------------
+                                TextButton(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        viewModel.searchNews(
+                                            1,
+                                            15,
+                                            editAuthorState.value,
+                                            editWordState.value,
+                                            emptyList()
+
+                                        )
+                                        navController.navigate(route = AppNavHost.News.route)
+                                        openFindNewsDialog.value = false
+                                    }
+                                ) {
+                                    Text("Искать")
+                                }
+//Кнопка отмены редактирования в диалоге------------------------------------------------------------------
+                                TextButton(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        openFindNewsDialog.value = false
+                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                ) {
+                                    Text("Отмена")
+                                }
+                            }
+
+                        }
+                    )
+//-----------------------Конец Alert Dialog---------------------------------------------------------
+
+                }
             }
-        }
         }
 //-------------------------------------------------------------------------------------------------         }
     }
-
+}
 
 
 @Preview(showBackground = true)

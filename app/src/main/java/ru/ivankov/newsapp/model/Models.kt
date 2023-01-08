@@ -97,6 +97,14 @@ data class AuthorizationDataResponse(
     val role: String,
     val token: String
 )
+//Для создания новости
+data class PostNewsBody(
+    val description: String,
+    val image: String,
+    val tags: List<String>,
+    val title: String
+)
+
 
 ////------------------Модели для запроса всех новостей----------------------------------------------------
 
