@@ -1,10 +1,19 @@
 package ru.ivankov.newsapp.model
 
+import okhttp3.MultipartBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 //(2) interface ApiInterface. Описывает методы взаимодействия с конечными точками
 interface ApiInterface {
+
+   //Загрузить картиночку
+    @Multipart
+    @POST("/api/v1/file/uploadFile")
+    suspend fun uploadImage(
+        @Part file: MultipartBody.Part?
+    ): Response<ImageUploadModel>
 
 // Запрос на вход в профиль
 
@@ -56,6 +65,13 @@ interface ApiInterface {
         @Body body: PostNewsBody,
         @Header("Authorization") token: String
     ): Call<PostNewsResponse>
+
+    //Для получение данных пользователя по Id
+    @GET("/api/v1/user/{id}")
+    fun idUserRequest(
+        @Path("id") id: String,
+        @Header("Authorization") token: String
+    ): Call<UserInfoResponse>
 
 
 //    @FormUrlEncoded

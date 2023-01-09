@@ -1,8 +1,21 @@
 package ru.ivankov.newsapp.model
 
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
+
 /*
 * Классы для создания объектов которыми будут реализовываться запросы и ответы
 * */
+//Модель для загрузки картиночки
+data class ImageUploadModel(
+    val success: Boolean,
+    val statusCode: Int,
+    val data: String
+)
+
+
 // Модель запроса на аутентификацию
 data class LoginRequest (
     val email: String,
@@ -67,7 +80,7 @@ data class UserInfoResponse(
     val statusCode: Int,
     val success: Boolean
 )
-
+//Для получения данных пользователя по Id
 data class UserInfoDataResponse(
     val avatar: String,
     val email: String,
@@ -106,6 +119,9 @@ data class PostNewsBody(
 )
 
 
+
+
+
 ////------------------Модели для запроса всех новостей----------------------------------------------------
 
 
@@ -137,17 +153,5 @@ data class PostNewsBody(
 //    val success: Boolean
 //)
 //
-//data class UserInfoDataResponse(
-//    val avatar: String,
-//    val email: String,
-//    val id: String,
-//    val name: String,
-//    val role: String
-//)
-////------------------Модель ответа на запрос о редактировании пользователя---------------------------
-//data class EditUserRequest(
-//    val avatar: String,
-//    val email: String,
-//    val name: String,
-//    val role: String
-//)
+
+

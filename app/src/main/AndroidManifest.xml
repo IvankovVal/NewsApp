@@ -3,6 +3,9 @@
     package="ru.ivankov.newsapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--Разрешения для галереи (чтоб аватарки грузить и фото) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
 

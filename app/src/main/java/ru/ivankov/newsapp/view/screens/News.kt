@@ -105,7 +105,7 @@ fun NewsScreen(
                     .padding(4.dp)
             ) {
                 items(newsState.value, key = { it.id }) {
-                    ItemNews(item = it,navController = navController)//it указывает на newsState.value
+                    ItemNews(item = it,viewModel, navController)//it указывает на newsState.value
                 }
             }
 // ---------------------------------------------------

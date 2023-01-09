@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.ivankov.newsapp.model.UserInfoDataResponse
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -38,11 +39,11 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 fun ProfileScreen(
     navController: NavHostController,
     viewModel: NewsViewModel,
-    user: String
 ) {
-    // val vmNews = NewsViewModel by activityViewModels()
     val context = LocalContext.current
+
     val profileState = viewModel.profileData.observeAsState()
+
     val newsState = viewModel.newsList.observeAsState(listOf())
     val pageState = viewModel.newsList.value!!.size/15   //pageAmount.observeAsState()
 
@@ -296,7 +297,7 @@ fun ProfileScreen(
                         .padding(4.dp)
                 ) {
                     items(newsState.value, key = { it.id }) {
-                        ItemNews(item = it,navController)//it указывает на newsState.value
+                        ItemNews(item = it,viewModel, navController)//it указывает на newsState.value
                     }
                 }
             }
