@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -21,9 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import ru.ivankov.newsapp.view.URIPathHelper
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
+import java.io.File
 
 @Composable
 fun RegistrationScreen(
@@ -43,7 +48,7 @@ fun RegistrationScreen(
     /*(1)Нам нужно отслеживать возвращенный URI,
    поэтому мы определим переменную , которая будет содержать это значение,
     которое мы инициализируем как null*/
-    var imageUri by remember { mutableStateOf<Uri?>(null)}
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
 /*(2)вторая переменная, Boolean,сообщит нам, есть ли у нас URI для отображения или нет*/
     var hasImage by remember { mutableStateOf(false) }
@@ -79,29 +84,50 @@ fun RegistrationScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentDescription = "Selected image",
                 )
-                // (6) тут нужно запустить запрос на добавление этого файла на сервер
-                //ответ сервера добавить в состояние аватара (registrationAvatarState)
-                //и значение этого состояния добавить в запрос на регистрацию
+
 
             }
-            Column(
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(
+                TextButton(
                     onClick = {
                         imagePicker.launch("image/*")
-                        /*Если мы запустим это, запустится средство выбора изображений,
-                         и мы сможем выбрать изображение, но ничего не произойдет,
-                          когда мы вернемся в наше приложение*/
-
                     },
                 ) {
                     Text(
                         text = "Выбрать аватар"
                     )
+                }
+// --------------------Кнопка сохранить аватар
+                TextButton(
+                    onClick = {
+                        // (6) тут нужно запустить запрос на добавление этого файла на сервер
+                        //ответ сервера добавить в состояние аватара (registrationAvatarState)
+                        //и значение этого состояния добавить в запрос на регистрацию
+                        val uriPathHelper = URIPathHelper()//получаем объект для перевода из URI в полный путь
+                        val filePath = imageUri?.let { uriPathHelper.getPath(context, it) }
+
+                        val requestFile: RequestBody? = filePath?.let {
+                            RequestBody.create(
+                                "multipart/form-data".toMediaTypeOrNull(), it
+                            )
+                        }
+
+
+//                        val requestFile =
+//                            filePath?.let { RequestBody.create("image/*".toMediaTypeOrNull(), it) }
+                        //val requestFile = avatar.asRequestBody("image/*".toMediaTypeOrNull())
+                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                            "file",
+                            "requestFile.name",
+                            requestFile!!
+                        )
+                        viewModel.uploadFile(filePart)
+                    },
+                ) {
+                    Text(text = "Сохранить")
                 }
             }
         }
@@ -155,8 +181,9 @@ fun RegistrationScreen(
                             registrationNameState.value,
                             registrationPasswordState.value
                         )
-                        requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
-                              navController.navigate(route = AppNavHost.Login.route)
+                        requestState.value =
+                            "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
+                        navController.navigate(route = AppNavHost.Login.route)
                     },
                     modifier = Modifier.padding(12.dp)
                 )
