@@ -78,5 +78,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
     //пагинация
 //    implementation "androidx.paging:paging-compose:1.0.0-alpha16"
+    //обрезка аватаров
+   // implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
 }

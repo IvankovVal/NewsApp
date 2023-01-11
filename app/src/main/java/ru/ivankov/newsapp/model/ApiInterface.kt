@@ -8,7 +8,7 @@ import retrofit2.http.*
 //(2) interface ApiInterface. Описывает методы взаимодействия с конечными точками
 interface ApiInterface {
 
-   //Загрузить картиночку
+   //Загрузить картиночку на сервер
     @Multipart
     @POST("/api/v1/file/uploadFile")
     suspend fun uploadImage(
