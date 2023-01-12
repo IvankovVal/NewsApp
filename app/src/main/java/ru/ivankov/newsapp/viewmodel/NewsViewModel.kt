@@ -306,25 +306,25 @@ class NewsViewModel : ViewModel() {
 
     }
     //-------------Функция добавления картиночки-------------------------------------------
-    fun uploadFile(picture: MultipartBody.Part?){
-        viewModelScope.launch(Dispatchers.IO) {
-            val callUploadImage: Call<ResponseBody?>? = ApiService.instance?.api?.uploadImage(picture)
-
-            callUploadImage?.enqueue(object : Callback<ResponseBody?>{
-                override fun onResponse(
-                    call: Call<ResponseBody?>,
-                    response: Response<ResponseBody?>
-                ) {
-                    Log.d("user", "${response.code()}")
-                }
-
-                override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
-                    Log.d("userF", "$t")
-                }
-            })
-
-        }
-    }
+//    fun uploadFile(picture: MultipartBody.Part?){
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val callUploadImage: Call<ImageUploadModel> = ApiService.instance?.api?.uploadImage(picture)
+//
+//            callUploadImage.enqueue(object : Callback<ImageUploadModel>{
+//                override fun onResponse(
+//                    call: Call<ImageUploadModel>,
+//                    response: Response<ImageUploadModel>
+//                ) {
+//                    Log.d("user", "${response.code()}")
+//                }
+//
+//                override fun onFailure(call: Call<ImageUploadModel>, t: Throwable) {
+//                    Log.d("userF", "$t")
+//                }
+//            })
+//
+//        }
+//    }
 
 //class ViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
 //    override fun <T : ViewModel?> create(modelClass: Class<T>): T {

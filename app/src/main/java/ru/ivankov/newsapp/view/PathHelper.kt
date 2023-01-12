@@ -8,10 +8,12 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import java.io.File
 
 class URIPathHelper {
 
     fun getPath(context: Context, uri: Uri): String? {
+        //выше ли версия sdk, чем kitkat (true)
         val isKitKatorAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
 
         // DocumentProvider
@@ -79,5 +81,22 @@ class URIPathHelper {
 
     fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
+    }
+}
+
+class Kva {
+    fun Uri.toImageFile(context: Context): File? {
+        val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(this, filePathColumn, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                val filePath = cursor.getString(columnIndex)
+                cursor.close()
+                return File(filePath)
+            }
+            cursor.close()
+        }
+        return null
     }
 }

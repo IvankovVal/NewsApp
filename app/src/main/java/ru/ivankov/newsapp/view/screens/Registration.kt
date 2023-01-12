@@ -1,6 +1,10 @@
 package ru.ivankov.newsapp.view.screens
 
+import android.content.Context
+import android.graphics.Path
 import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -17,9 +21,11 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.android.gms.cast.framework.media.ImagePicker
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -60,7 +66,24 @@ fun RegistrationScreen(
             hasImage = uri != null
             imageUri = uri
         }
+
     )
+    //Расширение класса Uri для добавления метода toImageFile
+    fun Uri.toImageFile(context: Context): File? {
+        val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(this,
+            filePathColumn, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                val filePath = cursor.getString(columnIndex)
+                cursor.close()
+                return File(filePath)
+            }
+            cursor.close()
+        }
+        return null
+    }
 
 
     Column(
@@ -106,31 +129,30 @@ fun RegistrationScreen(
                         // (6) тут нужно запустить запрос на добавление этого файла на сервер
                         //ответ сервера добавить в состояние аватара (registrationAvatarState)
                         //и значение этого состояния добавить в запрос на регистрацию
-                        val uriPathHelper = URIPathHelper()//получаем объект для перевода из URI в полный путь
-                        val filePath = imageUri?.let { uriPathHelper.getPath(context, it) }
+//                        val uriPathHelper = URIPathHelper()//получаем объект для перевода из URI в полный путь
+//                        val filePath = imageUri?.let { uriPathHelper.getPath(context, imageUri!!) }
+//
+//                        val requestFile: RequestBody? = filePath?.let {
+//                            RequestBody.create(
+//                                "multipart/form-data".toMediaTypeOrNull(), it
+//                            )  }
+//                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
+//                            "file",
+//                            "requestFile.name",//не знаю как сделать имя
+//                            requestFile!!
+//                        )
+                      //  val file: File = ImagePicker.getFile(data)!!
+                        val myFile: File? = imageUri!!.toImageFile(context)
 
-                        val requestFile: RequestBody? = filePath?.let {
-                            RequestBody.create(
-                                "multipart/form-data".toMediaTypeOrNull(), it
-                            )
-                        }
+//                        val myFile:File = imageUri!!.toFile()
+                        Log.d("RegFile", "$myFile")
 
 
-//                        val requestFile =
-//                            filePath?.let { RequestBody.create("image/*".toMediaTypeOrNull(), it) }
-                        //val requestFile = avatar.asRequestBody("image/*".toMediaTypeOrNull())
-                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                            "file",
-                            "requestFile.name",
-                            requestFile!!
-                        )
-                        viewModel.uploadFile(filePart)
+//                        viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
                     },
                 ) {
                     Text(text = "Сохранить")
-                }
-            }
-        }
+                } } }
 // Поле имени, email и пароля_______________________________________________________________________
         Box(
             modifier = Modifier
@@ -198,6 +220,7 @@ fun RegistrationScreen(
             }
         }
     }
+
 }
 
 @Preview(showBackground = true)
