@@ -1,7 +1,10 @@
 package ru.ivankov.newsapp.view
 
 import android.app.Application
+import android.content.ContentResolver
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -33,6 +36,8 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val vmNews = ViewModelProvider(this)[NewsViewModel::class.java]
                 val navController = rememberNavController()
+
+                val conRez = contentResolver//предадим его в функцию регистрации
 //                val mViewModel: NewsViewModel =
 //                    viewModel(factory = MainViewModelFactory(context.applicationContext as Application))
 
@@ -49,7 +54,8 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
 
                         ) {
-                        AppNavHost(vmNews, navController)
+
+                        AppNavHost(vmNews, navController,conRez)
                     }
                 }
             }

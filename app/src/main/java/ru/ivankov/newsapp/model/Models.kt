@@ -8,8 +8,8 @@ import retrofit2.http.Path
 /*
 * Классы для создания объектов которыми будут реализовываться запросы и ответы
 * */
-//Модель для загрузки картиночки
-data class ImageUploadModel(
+//Модель ответа на загругку картиночки
+data class ImageUploadResponse(
     val success: Boolean,
     val statusCode: Int,
     val data: String

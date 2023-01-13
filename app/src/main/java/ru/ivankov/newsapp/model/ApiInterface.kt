@@ -1,8 +1,11 @@
 package ru.ivankov.newsapp.model
 
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
 
@@ -14,7 +17,7 @@ interface ApiInterface {
     @POST("/api/v1/file/uploadFile")
     suspend fun uploadImage(
         @Part file: MultipartBody.Part?
-    ): Response<ImageUploadModel>
+    ): Response<ImageUploadResponse>
 
 // Запрос на вход в профиль
 
@@ -74,3 +77,27 @@ interface ApiInterface {
         @Header("Authorization") token: String
     ): Call<UserInfoResponse>
 }
+
+//interface MyApi{
+//
+//
+//    //Загрузить картиночку на сервер
+//    @Multipart
+//    @POST("/api/v1/file/uploadFile")
+//    suspend fun uploadImage(
+//        @Part file: MultipartBody.Part?
+//    ): Response<ImageUploadResponse>
+//
+//
+//    companion object{
+//        operator fun invoke() :MyApi{
+//
+//            return Retrofit.Builder()
+//                .baseUrl("https://news-feed.dunice-testing.com")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build()
+//                .create(MyApi::class.java)
+//        }
+//
+//    }
+//}

@@ -1,5 +1,6 @@
 package ru.ivankov.newsapp.view.navigation
 
+import android.content.ContentResolver
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,7 +19,7 @@ sealed class AppNavHost(val route: String) {
 }
 
 @Composable
-fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController) {
+fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conRez: ContentResolver) {
     val navController = rememberNavController()
 //в параметры NavHost передать navController, который создан выше и наш стартовый экран
     NavHost(navController = navController, startDestination = AppNavHost.News.route) {
@@ -27,7 +28,7 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController) {
         composable(AppNavHost.Friend.route){ FrendScreen(navController = navController,viewModel = mViewModel )}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
-        composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController,viewModel = mViewModel) }
+        composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez) }
 
     }
 }

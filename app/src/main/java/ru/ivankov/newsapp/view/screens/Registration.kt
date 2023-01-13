@@ -1,9 +1,10 @@
 package ru.ivankov.newsapp.view.screens
 
+import android.content.ContentResolver
 import android.content.Context
-import android.graphics.Path
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,27 +20,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.google.android.gms.cast.framework.media.ImagePicker
-import okhttp3.MediaType
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import ru.ivankov.newsapp.view.URIPathHelper
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.ivankov.newsapp.view.navigation.AppNavHost
-import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
+import java.io.InputStream
 
 @Composable
 fun RegistrationScreen(
     navController: NavHostController,
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
+    conRezolver: ContentResolver
 
 ) {
 
@@ -68,11 +65,14 @@ fun RegistrationScreen(
         }
 
     )
+
     //Расширение класса Uri для добавления метода toImageFile
     fun Uri.toImageFile(context: Context): File? {
         val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = context.contentResolver.query(this,
-            filePathColumn, null, null, null)
+        val cursor = context.contentResolver.query(
+            this,
+            filePathColumn, null, null, null
+        )
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 val columnIndex = cursor.getColumnIndex(filePathColumn[0])
@@ -129,30 +129,49 @@ fun RegistrationScreen(
                         // (6) тут нужно запустить запрос на добавление этого файла на сервер
                         //ответ сервера добавить в состояние аватара (registrationAvatarState)
                         //и значение этого состояния добавить в запрос на регистрацию
-//                        val uriPathHelper = URIPathHelper()//получаем объект для перевода из URI в полный путь
-//                        val filePath = imageUri?.let { uriPathHelper.getPath(context, imageUri!!) }
-//
-//                        val requestFile: RequestBody? = filePath?.let {
-//                            RequestBody.create(
-//                                "multipart/form-data".toMediaTypeOrNull(), it
-//                            )  }
-//                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
-//                            "file",
-//                            "requestFile.name",//не знаю как сделать имя
-//                            requestFile!!
-//                        )
-                      //  val file: File = ImagePicker.getFile(data)!!
-                        val myFile: File? = imageUri!!.toImageFile(context)
 
-//                        val myFile:File = imageUri!!.toFile()
-                        Log.d("RegFile", "$myFile")
+                        //функция расширения для получения имени файла
+                        fun ContentResolver.getFileName(fileUri: Uri): String {
+                            var name = ""
+                            val returnCursor = this.query(fileUri, null, null, null, null)
+                            if (returnCursor != null) {
+                                val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                returnCursor.moveToFirst()
+                                name = returnCursor.getString(nameIndex)
+                                returnCursor.close()
+                            }
+                            return name
+                        }
+                        //(1)Из Uri в файл
+                        val myStream: InputStream? = conRezolver.openInputStream(imageUri!!)//это не файл
+                        val file:File = createTempFile()
+                        myStream.use{input -> file.outputStream().use{output -> input!!.copyTo(output)}}
 
+                        val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
+                    Log.d("File ", "имя файла - $myFileName")
+               //     Log.d("File ", "имя файла - ${myFile. }")
 
-//                        viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
+                        //(2)Создать отправляемый файл
+                        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                        //(2)Сформировать мультипарт
+                        val filePart = MultipartBody.Part.createFormData(
+                            "file",
+                            " $myFileName",
+                            requestBody)
+
+//(3)Передать мультипарт методу запроса на загрузку файла и запустить его
+                     //  suspend {
+                           viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
+                       //  delay(1000)
+                      // }
+                        Log.d("ava", "в аватаре - ${viewModel.gettedAvatar.value}")
+
                     },
                 ) {
                     Text(text = "Сохранить")
-                } } }
+                }
+            }
+        }
 // Поле имени, email и пароля_______________________________________________________________________
         Box(
             modifier = Modifier
@@ -198,13 +217,13 @@ fun RegistrationScreen(
                 TextButton(
                     onClick = {
                         viewModel.postRegistration(
-                            "any",
+                            avatar = "any",
                             registrationEmailState.value,
                             registrationNameState.value,
                             registrationPasswordState.value
                         )
-                        requestState.value =
-                            "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
+                        Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
+                        requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
                         navController.navigate(route = AppNavHost.Login.route)
                     },
                     modifier = Modifier.padding(12.dp)
@@ -223,14 +242,15 @@ fun RegistrationScreen(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun prevRegistrationScreen() {
-    NewsAppTheme {
-        RegistrationScreen(
-            navController = rememberNavController(),
-            viewModel = NewsViewModel()
-        )
-
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun prevRegistrationScreen() {
+//    NewsAppTheme {
+//        RegistrationScreen(
+//            navController = rememberNavController(),
+//            viewModel = NewsViewModel(),
+//            conRezolver = conRez
+//        )
+//
+//    }
+//}

@@ -6,7 +6,9 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -40,8 +42,19 @@ class NewsViewModel : ViewModel() {
     private val _pageAmount = MutableLiveData(1)
     val pageAmount: MutableLiveData<Int?> = _pageAmount
 
+    private val _gettedAvatar = MutableLiveData("")
+    val gettedAvatar: MutableLiveData<String> = _gettedAvatar
+
     //Автор новости
-    private val _newsAuthor = MutableLiveData(UserInfoDataResponse("any photo","bla@mail.ru","123","Безымянный","user"))
+    private val _newsAuthor = MutableLiveData(
+        UserInfoDataResponse(
+            "any photo",
+            "bla@mail.ru",
+            "123",
+            "Безымянный",
+            "user"
+        )
+    )
     val newsAuthor: MutableLiveData<UserInfoDataResponse?> = _newsAuthor
 
     //новости в профиль
@@ -191,7 +204,7 @@ class NewsViewModel : ViewModel() {
 
                     _profileData.value =
                         DataLoginResponse(
-                            avatar = response.body()?.data!!.avatar,
+                            avatar = response.body()?.data!!.avatar,//приходит null
                             email = response.body()?.data!!.email,
                             id = response.body()?.data!!.id,
                             name = response.body()?.data!!.name,
@@ -277,7 +290,7 @@ class NewsViewModel : ViewModel() {
 //-------------Функция получения данных пользователя по Id-------------------------------------------
     fun getUserInfoById(id: String) {
 
-        val callActiveTasks = ApiService.instance?.api?.idUserRequest(id,profileData.value!!.token)
+        val callActiveTasks = ApiService.instance?.api?.idUserRequest(id, profileData.value!!.token)
         callActiveTasks?.enqueue(object : Callback<UserInfoResponse> {
             override fun onResponse(
                 call: Call<UserInfoResponse>,
@@ -305,26 +318,21 @@ class NewsViewModel : ViewModel() {
         })
 
     }
+
     //-------------Функция добавления картиночки-------------------------------------------
-//    fun uploadFile(picture: MultipartBody.Part?){
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val callUploadImage: Call<ImageUploadModel> = ApiService.instance?.api?.uploadImage(picture)
-//
-//            callUploadImage.enqueue(object : Callback<ImageUploadModel>{
-//                override fun onResponse(
-//                    call: Call<ImageUploadModel>,
-//                    response: Response<ImageUploadModel>
-//                ) {
-//                    Log.d("user", "${response.code()}")
-//                }
-//
-//                override fun onFailure(call: Call<ImageUploadModel>, t: Throwable) {
-//                    Log.d("userF", "$t")
-//                }
-//            })
-//
-//        }
-//    }
+    fun uploadFile(picture: MultipartBody.Part?){
+        viewModelScope.launch(Dispatchers.IO) {
+//            val callPostNews: Call<PostNewsResponse>? = ApiService.instance?.api?.postNews(
+            val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
+
+
+            Log.d("upload", "${callUploadImage!!.body()!!.data}")
+            Log.d("upload", "${callUploadImage!!.code()}")
+            _gettedAvatar.postValue(callUploadImage.body()!!.data) // "${callUploadImage!!.body()!!.data}"
+
+
+        }
+    }
 
 //class ViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
 //    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
