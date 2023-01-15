@@ -42,7 +42,7 @@ class NewsViewModel : ViewModel() {
     private val _pageAmount = MutableLiveData(1)
     val pageAmount: MutableLiveData<Int?> = _pageAmount
 
-    private val _gettedAvatar = MutableLiveData("")
+    private val _gettedAvatar = MutableLiveData("https://news-feed.dunice-testing.com/api/v1/file/16c503aa-87a8-4f72-b615-d1065b8ffe06.jpg")
     val gettedAvatar: MutableLiveData<String> = _gettedAvatar
 
     //Автор новости
@@ -74,39 +74,81 @@ class NewsViewModel : ViewModel() {
         avatar: String,
         email: String,
         name: String,
-        password: String
-    ) {
-        viewModelScope.launch {
-            val jsonObject = JSONObject()
-            jsonObject.put("avatar", avatar)
-            jsonObject.put("email", email)
-            jsonObject.put("name", name)
-            jsonObject.put("password", password)
-            jsonObject.put("role", "user")
-            val jsonObjectString = jsonObject.toString()
-            GlobalScope.launch(Dispatchers.IO) {
-                val url = URL("https://news-feed.dunice-testing.com/api/v1/auth/register")
-                val httpsURLConnection = url.openConnection() as HttpsURLConnection
-                httpsURLConnection.requestMethod = "POST"
-                httpsURLConnection.setRequestProperty("Content-Type", "application/json")
-                httpsURLConnection.setRequestProperty("Accept", "application/json")
-                httpsURLConnection.doInput = true
-                httpsURLConnection.doOutput = true
-                val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
-                outputStreamWriter.write(jsonObjectString)
-                outputStreamWriter.flush()
-                val responseCode = httpsURLConnection.responseCode
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.d("Reg", "${responseCode}")
+        password: String,
+        role: String
+    ){
+        viewModelScope.launch(Dispatchers.IO) {
+            val callAddUser: Call<AuthorizationResponse>? = ApiService.instance?.api?.addUserRequest(
+                registrationRequest(
+                    avatar,//"https://news-feed.dunice-testing.com/api/v1/file/caa9e2ec-b90b-4b71-b209-2cfe85730c07.jpeg",
+                    email,//"nikadim@mail.ru",
+                    name,//"Nikadim",
+                    password,//"198727",
+                    role
+//                    "https://news-feed.dunice-testing.com/api/v1/file/caa9e2ec-b90b-4b71-b209-2cfe85730c07.jpeg",
+//                    "nikadimUS@mail.ru",
+//                    "NikadimUS",
+//                    "198726",
+//                    "user"
 
+                )
+            )
+            callAddUser?.enqueue(object : Callback<AuthorizationResponse?> {
+                override fun onResponse(call: Call<AuthorizationResponse?>, response: Response<AuthorizationResponse?>) {
+                    Log.d("Reg", "${response.code() }")
+//                    profileData.value =
+//                        DataLoginResponse(
+//                            avatar = response.body()?.data!!.avatar,
+//                            email = response.body()?.data!!.email,
+//                            id = response.body()?.data!!.id,
+//                            name = response.body()?.data!!.name,
+//                            role = response.body()?.data!!.role,
+//                            token = response.body()?.data!!.token,
+//                        )
                 }
-                if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
-                    Log.d("Reg", "${responseCode}")
-                } else {
+                override fun onFailure(call: Call<AuthorizationResponse?>, t: Throwable) {
+                    Log.d("Reg", "$t")
                 }
-            }
+            })
         }
     }
+//    fun postRegistration(
+////        avatar: String,
+////        email: String,
+////        name: String,
+////        password: String
+//    ) {
+//        viewModelScope.launch {
+//            val jsonObject = JSONObject()
+//            jsonObject.put("avatar",  "any")//avatar)
+//            jsonObject.put("email", "denis@mail.ru")//email)
+//            jsonObject.put("name", "Denis" )//name)
+//            jsonObject.put("password", "d1234")//password)
+//            jsonObject.put("role", "user")
+//            val jsonObjectString = jsonObject.toString()
+//            GlobalScope.launch(Dispatchers.IO) {
+//                val url = URL("https://news-feed.dunice-testing.com/api/v1/auth/register")
+//                val httpsURLConnection = url.openConnection() as HttpsURLConnection
+//                httpsURLConnection.requestMethod = "POST"
+//                httpsURLConnection.setRequestProperty("Content-Type", "application/json")
+//                httpsURLConnection.setRequestProperty("Accept", "application/json")
+//                httpsURLConnection.doInput = true
+//                httpsURLConnection.doOutput = true
+//                val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
+//                outputStreamWriter.write(jsonObjectString)
+//                outputStreamWriter.flush()
+//                val responseCode = httpsURLConnection.responseCode
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    Log.d("Reg", "${responseCode}")
+//
+//                }
+//                if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+//                    Log.d("Reg", "${responseCode}")
+//                } else {
+//                }
+//            }
+//        }
+//    }
 
     //------------------Получение списка новостей----------------------------------------------------
     fun getNewsList(page: Int) {
@@ -326,9 +368,10 @@ class NewsViewModel : ViewModel() {
             val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
 
 
+            _gettedAvatar.postValue(callUploadImage!!.body()!!.data) // "${callUploadImage!!.body()!!.data}"
             Log.d("upload", "${callUploadImage!!.body()!!.data}")
             Log.d("upload", "${callUploadImage!!.code()}")
-            _gettedAvatar.postValue(callUploadImage.body()!!.data) // "${callUploadImage!!.body()!!.data}"
+
 
 
         }

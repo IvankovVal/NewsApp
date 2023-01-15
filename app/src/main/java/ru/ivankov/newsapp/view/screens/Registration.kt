@@ -217,10 +217,11 @@ fun RegistrationScreen(
                 TextButton(
                     onClick = {
                         viewModel.postRegistration(
-                            avatar = "any",
+                            avatar = "${viewModel.gettedAvatar.value}",
                             registrationEmailState.value,
                             registrationNameState.value,
-                            registrationPasswordState.value
+                            registrationPasswordState.value,
+                            role = "user"
                         )
                         Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
                         requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
