@@ -1,7 +1,5 @@
 package ru.ivankov.newsapp.view.screens
 
-import android.content.ContentValues
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -11,10 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.*
+import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -38,12 +36,12 @@ fun LoginScreen(
     ) {
         TextField(
             value = loginEmailState.value,
-            onValueChange = { loginEmailState.value = it },
+            onValueChange = { loginEmailState.value = removeSpace(it) },
             label = { Text("Enter email") })
 
         TextField(
             value = loginPasswordState.value,
-            onValueChange = { loginPasswordState.value = it },
+            onValueChange = { loginPasswordState.value = removeSpace(it) },
             label = { Text("Enter password") })
         Row {
             //Кнопка входа

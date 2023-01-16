@@ -31,8 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.ivankov.newsapp.model.NewsContentTags
-import ru.ivankov.newsapp.model.PostNewsBody
+import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -187,17 +186,17 @@ fun NewsScreen(
                             Column() {
                                 TextField(
                                     value = editTitleState.value,
-                                    onValueChange = { editTitleState.value = it },
+                                    onValueChange = { editTitleState.value = removeSpace(it) },
                                     label = { Text("Название") })
 
 
                                 TextField(
                                     value = editDescriptionState.value,
-                                    onValueChange = { editDescriptionState.value = it },
+                                    onValueChange = { editDescriptionState.value = removeSpace(it) },
                                     label = { Text("Содержание") })
                                 TextField(
                                     value = editTagsOnCreateState.value,
-                                    onValueChange = { editTagsOnCreateState.value = it },
+                                    onValueChange = { editTagsOnCreateState.value = removeSpace(it) },
                                     label = { Text("tags") })
                             }
 
@@ -264,17 +263,17 @@ fun NewsScreen(
                             Column() {
                                 TextField(
                                     value = editAuthorState.value,
-                                    onValueChange = { editAuthorState.value = it },
+                                    onValueChange = { editAuthorState.value = removeSpace(it) },
                                     label = { Text("Автор") })
 
 
                                 TextField(
                                     value = editWordState.value,
-                                    onValueChange = { editWordState.value = it },
+                                    onValueChange = { editWordState.value = removeSpace(it) },
                                     label = { Text("Ключевые слова") })
                                 TextField(
                                     value = editTagState.value,
-                                    onValueChange = { editTagState.value = it },
+                                    onValueChange = { editTagState.value = removeSpace(it) },
                                     label = { Text("tags") })
                             }
 
