@@ -1,5 +1,6 @@
 package ru.ivankov.newsapp.view
 
+
 fun ValidateEmail(email: String): Boolean {
     val emailEndsList =
         listOf("ru", "com", "org", "net", "su", "kz", "ua", "by")
