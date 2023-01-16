@@ -195,12 +195,15 @@ fun ProfileScreen(
                             Column() {
                                 TextField(
                                     value = editNameState.value,
-                                    onValueChange = { editNameState.value = it }
-//                                    label = { Text("Новое имя") })
-                                )
+                                    onValueChange = { editNameState.value = it },
+                                            label = { Text("Ввести новое имя") },
+                                    modifier = Modifier.padding(12.dp)                                )
                                 TextField(
                                     value = editEmailState.value,
-                                    onValueChange = { editEmailState.value = it })
+                                    onValueChange = { editEmailState.value = it },
+                                            label = { Text("Ввести новый email") },
+                                    modifier = Modifier.padding(12.dp)
+                                )
                             }
 
                         },

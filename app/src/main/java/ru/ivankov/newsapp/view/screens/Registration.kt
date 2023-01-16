@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -20,14 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.ivankov.newsapp.view.MainActivity
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
 import java.io.InputStream
@@ -185,18 +192,23 @@ fun RegistrationScreen(
                 TextField(
                     value = registrationNameState.value,
                     onValueChange = { registrationNameState.value = it },
+                    singleLine = true,//в одну линию
                     label = { Text("Ввести имя") },
+                    keyboardOptions = KeyboardOptions(KeyboardCapitalization.Words),//Каждое слово в поле с большой буквы
                     modifier = Modifier.padding(12.dp)
                 )
                 TextField(
                     value = registrationEmailState.value,
                     onValueChange = { registrationEmailState.value = it },
+                    singleLine = true,//в одну линию
                     label = { Text("Ввести email") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
                     modifier = Modifier.padding(12.dp)
                 )
                 TextField(
                     value = registrationPasswordState.value,
                     onValueChange = { registrationPasswordState.value = it },
+                    singleLine = true,//в одну линию
                     label = { Text("Ввести пароль") },
                     modifier = Modifier.padding(12.dp)
                 )
@@ -247,10 +259,11 @@ fun RegistrationScreen(
 //@Composable
 //fun prevRegistrationScreen() {
 //    NewsAppTheme {
+//        //val conRez = contentResolver
 //        RegistrationScreen(
 //            navController = rememberNavController(),
 //            viewModel = NewsViewModel(),
-//            conRezolver = conRez
+//            conRezolver =
 //        )
 //
 //    }
