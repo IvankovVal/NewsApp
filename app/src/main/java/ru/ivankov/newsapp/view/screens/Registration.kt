@@ -6,14 +6,17 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -21,16 +24,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.ivankov.newsapp.view.emailValidator
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.ui.theme.BadInput
+import ru.ivankov.newsapp.view.ui.theme.GoodInput
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
 import java.io.InputStream
@@ -45,8 +53,15 @@ fun RegistrationScreen(
 
     val context = LocalContext.current
     val profileState = viewModel.profileData.observeAsState()
+    val messageState = viewModel.registrationMessage.observeAsState()
     val registrationNameState = remember { mutableStateOf("") }
     val registrationEmailState = remember { mutableStateOf("") }
+    val isEmailValid = remember { mutableStateOf(false) }
+    val tfColor = if (isEmailValid.value) {
+        GoodInput
+    } else {
+        BadInput
+    }
     val registrationPasswordState = remember { mutableStateOf("") }
     val registrationAvatarState = remember { mutableStateOf("") }
     val requestState = remember { mutableStateOf("") }
@@ -195,11 +210,24 @@ fun RegistrationScreen(
                 )
                 TextField(
                     value = registrationEmailState.value,
-                    onValueChange = { registrationEmailState.value = removeSpace(it) },
+                    onValueChange = {
+                        registrationEmailState.value = removeSpace(it)
+                        isEmailValid.value = false
+                    },
                     singleLine = true,//в одну линию
+                    isError = isEmailValid.value,
                     label = { Text("Ввести email") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
+                    keyboardActions = KeyboardActions(onDone = {
+                        isEmailValid.value =
+                            emailValidator(registrationEmailState.value)
+                    }
+                    ),
+                    textStyle = TextStyle(fontSize = 16.sp),
+                    colors = TextFieldDefaults.textFieldColors
+                        (textColor = Color.Black, backgroundColor = tfColor),
                     modifier = Modifier.padding(12.dp)
+
                 )
                 TextField(
                     value = registrationPasswordState.value,
@@ -233,7 +261,9 @@ fun RegistrationScreen(
                         )
                         Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
                         requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
-                        navController.navigate(route = AppNavHost.Login.route)
+                        if(messageState.value == ""){
+                            Toast.makeText(context, "Успешно", Toast.LENGTH_LONG).show()
+                            navController.navigate(route = AppNavHost.Login.route) }
                     },
                     modifier = Modifier.padding(12.dp)
                 )

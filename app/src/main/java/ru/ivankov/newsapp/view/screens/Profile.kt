@@ -41,7 +41,7 @@ fun ProfileScreen(
     val profileState = viewModel.profileData.observeAsState()
 
     val newsState = viewModel.newsList.observeAsState(listOf())
-    val pageState = viewModel.newsList.value!!.size/15   //pageAmount.observeAsState()
+    val pageState = viewModel.newsList.value!!.size / 15   //pageAmount.observeAsState()
 
 
     //основной контейнер(похоже можно было не создавать)
@@ -112,7 +112,7 @@ fun ProfileScreen(
                 }
             }
         }
- //Кнопки удаления и редактирования профиля и выхода-------------------------------------------------
+        //Кнопки удаления и редактирования профиля и выхода-------------------------------------------------
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -122,10 +122,11 @@ fun ProfileScreen(
         ) {
             Row() {
 //Кнопка удаления в screen--------------------------------------------------------------------------
-                TextButton(onClick = {
-                    //Тут должен быть вызов диалога
-                    openDeleteUserDialog.value = true
-                },
+                TextButton(
+                    onClick = {
+                        //Тут должен быть вызов диалога
+                        openDeleteUserDialog.value = true
+                    },
                     modifier = Modifier.weight(1f)
 
                 ) {
@@ -173,10 +174,11 @@ fun ProfileScreen(
 //-----------------------Конец Alert Dialog---------------------------------------------------------
                 }
 //Кнопка редактирования в screen--------------------------------------------------------------------
-                TextButton(onClick = {
-                    openDeleteUserDialog.value = true
-                    //viewModel.update_task("","bellator87@mail.ru","Valeriy Urich","${profileState.value?.token}")
-                },
+                TextButton(
+                    onClick = {
+                        openDeleteUserDialog.value = true
+                        //viewModel.update_task("","bellator87@mail.ru","Valeriy Urich","${profileState.value?.token}")
+                    },
                     modifier = Modifier.weight(1f)
 
                 ) {
@@ -192,12 +194,13 @@ fun ProfileScreen(
                                 TextField(
                                     value = editNameState.value,
                                     onValueChange = { editNameState.value = removeSpace(it) },
-                                            label = { Text("Ввести новое имя") },
-                                    modifier = Modifier.padding(12.dp)                                )
+                                    label = { Text("Ввести новое имя") },
+                                    modifier = Modifier.padding(12.dp)
+                                )
                                 TextField(
                                     value = editEmailState.value,
                                     onValueChange = { editEmailState.value = removeSpace(it) },
-                                            label = { Text("Ввести новый email") },
+                                    label = { Text("Ввести новый email") },
                                     modifier = Modifier.padding(12.dp)
                                 )
                             }
@@ -217,7 +220,8 @@ fun ProfileScreen(
                                             "",
                                             "${editEmailState.value}",
                                             "${editNameState.value}",
-                                            "${profileState.value?.token}")
+                                            "${profileState.value?.token}"
+                                        )
                                         navController.navigate(route = AppNavHost.News.route)
                                         openDeleteUserDialog.value = false
                                     }
@@ -229,8 +233,7 @@ fun ProfileScreen(
                                     modifier = Modifier.weight(1f),
                                     onClick = {
                                         openDeleteUserDialog.value = false
-                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG)
-                                            .show()
+                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG).show()
                                     }
                                 ) {
                                     Text("Отмена")
@@ -242,14 +245,18 @@ fun ProfileScreen(
 //-----------------------Конец Alert Dialog---------------------------------------------------------
                 }
 //Кнопка выхода из учётной записи-------------------------------------------------------------------------
-                TextButton(onClick = {
-                    viewModel._profileData.value = null
-                       navController.navigate(route = AppNavHost.News.route)
-                },
-                modifier = Modifier.weight(1f))
-                {Text(text = "ВЫХОД") }
+                TextButton(
+                    onClick = {
+                        viewModel._profileData.value = null
+                        viewModel.getNewsList(1)
+                        navController.navigate(route = AppNavHost.News.route)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                { Text(text = "ВЫХОД") }
 
-            }}
+            }
+        }
         // -------------------------Строка страниц_______________________________________________
 
 
@@ -261,7 +268,7 @@ fun ProfileScreen(
                 .fillMaxWidth()
 
         ) {
-            items(count = Math.ceil(pageState.toDouble()).toInt() + 1 )
+            items(count = Math.ceil(pageState.toDouble()).toInt() + 1)
             {
                 Text(
                     text = "стр ${it + 1}",
@@ -281,46 +288,47 @@ fun ProfileScreen(
                 )
             }
         }
-  //Новости пользователя------------------------------------------------------------------
-            Box(
+        //Новости пользователя------------------------------------------------------------------
+        Box(
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .weight(5f)
+        ) {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .background(Color.White)
                     .fillMaxWidth()
-                    .weight(5f)
+                    .background(color = Color.White)
+                    .padding(4.dp)
             ) {
-                LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.White)
-                        .padding(4.dp)
-                ) {
-                    items(newsState.value, key = { it.id }) {
-                        ItemNews(item = it,viewModel, navController)//it указывает на newsState.value
-                    }
-                }
-            }
-            //Кнопка назад-----------------------------------------------------------------------------
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxWidth()
-                    .weight(0.5f)
-            ) {
-                //Кнопки
-                TextButton(onClick = {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
-                        viewModel.getNewsList(1)
-                        navController.navigate(route = AppNavHost.News.route) }
-                }) {
-                    Text(text = "ВСЕ НОВОСТИ")
+                items(newsState.value, key = { it.id }) {
+                    ItemNews(item = it, viewModel, navController)//it указывает на newsState.value
                 }
             }
         }
+        //Кнопка назад-----------------------------------------------------------------------------
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .weight(0.5f)
+        ) {
+            //Кнопки
+            TextButton(onClick = {
+                GlobalScope.launch(Dispatchers.Main) {
+                    delay(1000)
+//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
+                    viewModel.getNewsList(1)
+                    navController.navigate(route = AppNavHost.News.route)
+                }
+            }) {
+                Text(text = "ВСЕ НОВОСТИ")
+            }
+        }
     }
+}
 //    @Preview(showBackground = true)
 //    @Composable
 //    fun prevMyProfileScreen() {

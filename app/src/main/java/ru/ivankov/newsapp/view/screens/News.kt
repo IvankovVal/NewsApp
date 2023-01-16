@@ -159,7 +159,8 @@ fun NewsScreen(
 
 //Кнопка добавить запись---------------------------------------
                 IconButton(
-                    onClick = {if(profileState.value != null)
+                    onClick = {
+                        if(profileState.value != null)
                         openCreateNewsDialog.value = true
                         else
                     Toast.makeText(context, "Войдите в профиль", Toast.LENGTH_LONG).show()

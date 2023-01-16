@@ -1,7 +1,7 @@
 package ru.ivankov.newsapp.view
 
 
-fun ValidateEmail(email: String): Boolean {
+fun emailValidator(email: String): Boolean {
     val emailEndsList =
         listOf("ru", "com", "org", "net", "su", "kz", "ua", "by")
     var validate = false
@@ -24,6 +24,17 @@ fun ValidateEmail(email: String): Boolean {
     }
     return validate
 }
+
+//fun passwordValidator(password: String): Boolean {
+//
+//    var validate = false
+//    if (password.isNotBlank() &&
+//        password.length >= 4
+//        ) {
+//                validate = true
+//    }
+//    return validate
+//}
 
 fun removeSpace(input: String): String {
     var str = input

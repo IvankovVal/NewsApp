@@ -1,15 +1,13 @@
 package ru.ivankov.newsapp.view.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +15,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.*
-import ru.ivankov.newsapp.view.ValidateEmail
+import ru.ivankov.newsapp.view.emailValidator
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.BadInput
@@ -37,8 +36,9 @@ fun LoginScreen(
     val context = LocalContext.current
     val loginPasswordState = remember { mutableStateOf("") }
     val loginEmailState = remember { mutableStateOf("") }
+    val loginMessageState = viewModel.loginMessage.observeAsState()
 
-    var isEmailValid = remember { mutableStateOf(false) }
+    val isEmailValid = remember { mutableStateOf(false) }
     val tfColor = if (isEmailValid.value) {
         GoodInput
     } else {
@@ -53,6 +53,11 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            text = "${loginMessageState.value}",
+            modifier = Modifier.padding(12.dp)
+
+        )
         TextField(
             value = loginEmailState.value,
             onValueChange = {
@@ -65,12 +70,14 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
                 isEmailValid.value =
-                    ValidateEmail(loginEmailState.value)
+                    emailValidator(loginEmailState.value)
             }
             ),
             textStyle = TextStyle(fontSize = 16.sp),
             colors = TextFieldDefaults.textFieldColors
-                (textColor = Color.Black, backgroundColor = tfColor)
+                (textColor = Color.Black, backgroundColor = tfColor),
+            modifier = Modifier.padding(12.dp)
+
         )
         //  if (!isEmailValid.value)  {TextFieldColors = }
         //Toast.makeText(context,"Не корректный email",Toast.LENGTH_SHORT).show()
@@ -79,7 +86,9 @@ fun LoginScreen(
         TextField(
             value = loginPasswordState.value,
             onValueChange = { loginPasswordState.value = removeSpace(it) },
-            label = { Text("Enter password") })
+            label = { Text("Enter password") },
+            modifier = Modifier.padding(12.dp)
+        )
         Row {
             //Кнопка входа
             TextButton(
@@ -96,18 +105,26 @@ fun LoginScreen(
                             emptyList()
 
                         )
-                        navController.navigate(route = AppNavHost.MyProfile.route)
+                        if (viewModel.loginMessage.value == "") {
+                            navController.navigate(route = AppNavHost.MyProfile.route)
+                        }
                     }
 
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(12.dp)
+
             ) { Text(text = "ВХОД") }
 
 
 //Кнопка регистрации
             TextButton(
                 onClick = { navController.navigate(route = AppNavHost.Registration.route) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(12.dp)
+
             ) { Text(text = "РЕГИСТРАЦИЯ") }
 
 //Кнопка возвращения
@@ -116,7 +133,10 @@ fun LoginScreen(
                     viewModel.getNewsList(1)
                     navController.navigate(route = AppNavHost.News.route)
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(12.dp)
+
             ) { Text(text = "НАЗАД") }
 
         }
