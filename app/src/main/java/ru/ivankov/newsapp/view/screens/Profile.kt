@@ -264,7 +264,7 @@ fun ProfileScreen(
         NewsAppTheme {
             ProfileScreen(
                 navController = rememberNavController(),
-                viewModel = NewsViewModel(),
+                viewModel = NewsViewModel()
             )
         }
     }

@@ -186,7 +186,7 @@ fun RegistrationOrEditScreen(
 
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
                         //  suspend {
-                        viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
+                        viewModel.uploadAvatar(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
                         //  delay(1000)
                         // }
                         Log.d("ava", "в аватаре - ${viewModel.gettedAvatar.value}")
@@ -297,6 +297,9 @@ fun RegistrationOrEditScreen(
                             registrationEmailState.value,
                             registrationNameState.value,
                             "${profileState.value?.token}" )
+                        //Выйти из профиля
+                        viewModel._profileData.value = null
+                        viewModel.getNewsList(1)
                         navController.navigate(route = AppNavHost.News.route)
                     }
                 ) {Text("Редактировать")}

@@ -4,22 +4,12 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.ivankov.newsapp.model.*
-import java.io.File
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 /*
    * здесь должны быть списки содержащие новости и методы с запросами к серверу на получение данных
@@ -50,6 +40,9 @@ class NewsViewModel : ViewModel() {
     private val _gettedAvatar = MutableLiveData(
         "https://news-feed.dunice-testing.com/api/v1/file/16c503aa-87a8-4f72-b615-d1065b8ffe06.jpg")
     val gettedAvatar: MutableLiveData<String> = _gettedAvatar
+
+    private val _guttedPicture = MutableLiveData("")
+    val guttedPicture: MutableLiveData<String> = _guttedPicture
 
     //Автор новости
     private val _newsAuthor = MutableLiveData(
@@ -334,19 +327,26 @@ class NewsViewModel : ViewModel() {
 
     }
 
-    //-------------Функция добавления картиночки-------------------------------------------
-    fun uploadFile(picture: MultipartBody.Part?){
+    //-------------Функция добавления аватара-------------------------------------------
+    fun uploadAvatar(picture: MultipartBody.Part?){
         viewModelScope.launch(Dispatchers.IO) {
 //            val callPostNews: Call<PostNewsResponse>? = ApiService.instance?.api?.postNews(
             val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
 
 
             _gettedAvatar.postValue(callUploadImage!!.body()!!.data) // "${callUploadImage!!.body()!!.data}"
-            Log.d("upload", "${callUploadImage!!.body()!!.data}")
-            Log.d("upload", "${callUploadImage!!.code()}")
+            Log.d("upAva", "${callUploadImage!!.body()!!.data}")
+            Log.d("upAva", "${callUploadImage!!.code()}")
+        }
+    }
+    //-------------Функция добавления картинки в новости-------------------------------------------
+    fun uploadPicture(picture: MultipartBody.Part?){
+        viewModelScope.launch(Dispatchers.IO) {
+            val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
 
-
-
+            _guttedPicture.postValue(callUploadImage!!.body()!!.data)
+            Log.d("upPic", "${callUploadImage!!.body()!!.data}")
+            Log.d("upPic", "${callUploadImage!!.code()}")
         }
     }
 

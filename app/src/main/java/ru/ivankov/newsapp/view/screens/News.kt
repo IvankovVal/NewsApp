@@ -161,7 +161,7 @@ fun NewsScreen(
                 IconButton(
                     onClick = {
                         if(profileState.value != null)
-                        openCreateNewsDialog.value = true
+                            navController.navigate(route = AppNavHost.AddNewsScreen.route)
                         else
                     Toast.makeText(context, "Войдите в профиль", Toast.LENGTH_LONG).show()
 
@@ -177,70 +177,6 @@ fun NewsScreen(
                         )
 
                 }
-                //тут диалог
-                if (openCreateNewsDialog.value) {
-                    //Вызываем диалог
-//--------------------------------------Alert dialog при добавлении новости-----------------------------
-                    AlertDialog(onDismissRequest = { openCreateNewsDialog.value = false },
-                        title = { Text(text = "Добавить новость") },
-                        text = {
-                            Column() {
-                                TextField(
-                                    value = editTitleState.value,
-                                    onValueChange = { editTitleState.value = removeSpace(it) },
-                                    label = { Text("Название") })
-
-
-                                TextField(
-                                    value = editDescriptionState.value,
-                                    onValueChange = { editDescriptionState.value = removeSpace(it) },
-                                    label = { Text("Содержание") })
-                                TextField(
-                                    value = editTagsOnCreateState.value,
-                                    onValueChange = { editTagsOnCreateState.value = removeSpace(it) },
-                                    label = { Text("tags") })
-                            }
-
-                        },
-
-                        buttons = {
-                            Row(
-                                modifier = Modifier.padding(all = 8.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-//Кнопка создать в диалоге-------------------------------------------------------------------------
-
-                                TextButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        viewModel.insertNews(
-                                            editDescriptionState.value,
-                                            "any image",
-                                            emptyList(),
-                                            editTitleState.value
-                                        )
-                                        openCreateNewsDialog.value = false
-                                    }
-                                ) {
-                                    Text("Создать")
-                                }
-//Кнопка отмены создания в диалоге------------------------------------------------------------------
-                                TextButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        openCreateNewsDialog.value = false
-                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG)
-                                            .show()
-                                    }
-                                ) {
-                                    Text("Отмена")
-                                }
-                            }
-
-                        }
-                    )}
-//-----------------------Конец Alert Dialog---------------------------------------------------------
-
 //----------------------Кнопка поиск---------------------------------------
                 IconButton(
                     onClick = { openFindNewsDialog.value = true },
@@ -251,9 +187,7 @@ fun NewsScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Поиск",
-
                         )
-
                 }
                 if (openFindNewsDialog.value) {
                     //Вызываем диалог
@@ -326,8 +260,6 @@ fun NewsScreen(
 //-------------------------------------------------------------------------------------------------         }
     }
 }
-
-
 @Preview(showBackground = true)
 @Composable
 fun prevNewsScreen() {
@@ -336,7 +268,6 @@ fun prevNewsScreen() {
             navController = rememberNavController(),
             viewModel = NewsViewModel()
         )
-
     }
 }
 

@@ -3,22 +3,23 @@ package ru.ivankov.newsapp.view.screens
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
@@ -80,12 +81,29 @@ fun ItemNews(
                 contentDescription = "Картиночка",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-//                    .size(120.dp)
-//                    .clip(CircleShape))
             )
+// Автор новости
             Text(text = "${item.username}")
+//Id новости
             Text(text = "${item.id} - ${item.title}")
+// Содержание новости
             Text(text = "${item.description}")
+// Тэги
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 20.dp)
+            ) {
+                for (i in item.tags) {
+                    Text(
+                        text = "#${i.title} ",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontStyle = FontStyle.Italic,
+                    )
+                }
+            }
         }
     }
 }
@@ -98,7 +116,7 @@ fun ItemNewsProfile(
 ) {
     val context = LocalContext.current
 // -----------------------------------------------------------------------------------
-// Карточка пункта списка__________________________________________________________________________________
+// Карточка пункта списка____________________________________________________________________________
     Card(
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp,
@@ -113,14 +131,33 @@ fun ItemNewsProfile(
         ) {
 
             AsyncImage(
-                model = "${item.image}",//profileState.value?.avatar,
+                model = item.image,//profileState.value?.avatar,
                 contentDescription = "Картиночка",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
             )
-            Text(text = "${item.username}")
+            // Автор новости
+            Text(text = item.username)
+//Id новости
             Text(text = "${item.id} - ${item.title}")
-            Text(text = "${item.description}")
+// Содержание новости
+            Text(text = item.description)
+// Тэги
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(vertical = 5.dp, horizontal = 20.dp)
+            ) {
+                for (i in item.tags) {
+                    Text(
+                        text = "#${i.title} ",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontStyle = FontStyle.Italic,
+                    )
+                }
+            }
         }
     }
 }
