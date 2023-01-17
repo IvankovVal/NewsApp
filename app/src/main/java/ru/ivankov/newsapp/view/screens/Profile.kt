@@ -19,9 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -29,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
 @Composable
@@ -43,30 +46,17 @@ fun ProfileScreen(
     val newsState = viewModel.newsList.observeAsState(listOf())
     val pageState = viewModel.newsList.value!!.size / 15   //pageAmount.observeAsState()
 
-
     //основной контейнер(похоже можно было не создавать)
     val openDeleteUserDialog = remember { mutableStateOf(false) }
-    val openEditUserDialog = remember { mutableStateOf(false) }
-    val editAvatarState = remember { mutableStateOf("") }
-    val editNameState = remember { mutableStateOf("") }
-    val editEmailState = remember { mutableStateOf("") }
-
-
 //-------------------------------------------------------------
     Column()
     {
         //Карточка пользователя
-        Box(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxWidth()
-                .weight(2f)
-        ) {
+        Box( modifier = Modifier.background(Color.White).fillMaxWidth().weight(2f)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(10.dp)
-            ) {
+                modifier = Modifier.padding(10.dp)) {
 //-------------  Аватар----------------------------------------------------------------------------
 
                 AsyncImage(
@@ -175,9 +165,7 @@ fun ProfileScreen(
                 }
 //Кнопка редактирования в screen--------------------------------------------------------------------
                 TextButton(
-                    onClick = {
-                        openDeleteUserDialog.value = true
-                        //viewModel.update_task("","bellator87@mail.ru","Valeriy Urich","${profileState.value?.token}")
+                    onClick = { navController.navigate(route = AppNavHost.EditScreen.route)
                     },
                     modifier = Modifier.weight(1f)
 
@@ -186,63 +174,7 @@ fun ProfileScreen(
                 }
                 if (openDeleteUserDialog.value) {
                     //Вызываем диалог
-//--------------------------------------Alert dialog при редактировании-----------------------------
-                    AlertDialog(onDismissRequest = { openDeleteUserDialog.value = false },
-                        title = { Text(text = "Редактировать профиль") },
-                        text = {
-                            Column() {
-                                TextField(
-                                    value = editNameState.value,
-                                    onValueChange = { editNameState.value = removeSpace(it) },
-                                    label = { Text("Ввести новое имя") },
-                                    modifier = Modifier.padding(12.dp)
-                                )
-                                TextField(
-                                    value = editEmailState.value,
-                                    onValueChange = { editEmailState.value = removeSpace(it) },
-                                    label = { Text("Ввести новый email") },
-                                    modifier = Modifier.padding(12.dp)
-                                )
-                            }
 
-                        },
-
-                        buttons = {
-                            Row(
-                                modifier = Modifier.padding(all = 8.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-//Кнопка редактирования в диалоге-------------------------------------------------------------------------
-                                TextButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        viewModel.updateUser(
-                                            "",
-                                            "${editEmailState.value}",
-                                            "${editNameState.value}",
-                                            "${profileState.value?.token}"
-                                        )
-                                        navController.navigate(route = AppNavHost.News.route)
-                                        openDeleteUserDialog.value = false
-                                    }
-                                ) {
-                                    Text("Редактировать")
-                                }
-//Кнопка отмены редактирования в диалоге------------------------------------------------------------------
-                                TextButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        openDeleteUserDialog.value = false
-                                        Toast.makeText(context, "Отменить", Toast.LENGTH_LONG).show()
-                                    }
-                                ) {
-                                    Text("Отмена")
-                                }
-                            }
-
-                        }
-                    )
-//-----------------------Конец Alert Dialog---------------------------------------------------------
                 }
 //Кнопка выхода из учётной записи-------------------------------------------------------------------------
                 TextButton(
@@ -258,8 +190,6 @@ fun ProfileScreen(
             }
         }
         // -------------------------Строка страниц_______________________________________________
-
-
         LazyRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -303,7 +233,7 @@ fun ProfileScreen(
                     .padding(4.dp)
             ) {
                 items(newsState.value, key = { it.id }) {
-                    ItemNews(item = it, viewModel, navController)//it указывает на newsState.value
+                    ItemNewsProfile(item = it, viewModel, navController)//it указывает на newsState.value
                 }
             }
         }
@@ -319,7 +249,6 @@ fun ProfileScreen(
             TextButton(onClick = {
                 GlobalScope.launch(Dispatchers.Main) {
                     delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
                     viewModel.getNewsList(1)
                     navController.navigate(route = AppNavHost.News.route)
                 }
@@ -329,17 +258,16 @@ fun ProfileScreen(
         }
     }
 }
-//    @Preview(showBackground = true)
-//    @Composable
-//    fun prevMyProfileScreen() {
-//        NewsAppTheme {
-//            ProfileScreen(
-//                navController = rememberNavController(),
-//                viewModel = NewsViewModel(),
-//                user = viewModel
-//            )
-//        }
-//    }
+    @Preview(showBackground = true)
+    @Composable
+    fun prevMyProfileScreen() {
+        NewsAppTheme {
+            ProfileScreen(
+                navController = rememberNavController(),
+                viewModel = NewsViewModel(),
+            )
+        }
+    }
 
 
 

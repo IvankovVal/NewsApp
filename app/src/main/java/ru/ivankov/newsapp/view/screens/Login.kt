@@ -93,16 +93,18 @@ fun LoginScreen(
             //Кнопка входа
             TextButton(
                 onClick = {
-                    viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value)
+                    // синхронизировать без секундочки
+                    viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value) {}
                     GlobalScope.launch(Dispatchers.Main) {
                         delay(1000)
 //                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
+                        // одно из решений использовать LaunchEffect на странице news
                         viewModel.searchNews(
                             1,
                             15,
                             "${viewModel.profileData.value?.name}",//"${viewModel.profileData.value?.name}",//дать автора
                             "",
-                            emptyList()
+                            listOf()
 
                         )
                         if (viewModel.loginMessage.value == "") {
@@ -113,17 +115,17 @@ fun LoginScreen(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(vertical = 12.dp)
 
             ) { Text(text = "ВХОД") }
 
 
 //Кнопка регистрации
             TextButton(
-                onClick = { navController.navigate(route = AppNavHost.Registration.route) },
+                onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(vertical = 12.dp)
 
             ) { Text(text = "РЕГИСТРАЦИЯ") }
 
@@ -135,7 +137,7 @@ fun LoginScreen(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(vertical = 12.dp)
 
             ) { Text(text = "НАЗАД") }
 

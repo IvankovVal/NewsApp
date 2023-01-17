@@ -11,7 +11,9 @@ import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
 sealed class AppNavHost(val route: String) {
     object Login: AppNavHost("start_screen")
-    object Registration: AppNavHost("registration_screen")
+  //  object Registration: AppNavHost("registration_screen")
+    object RegistrationScreen: AppNavHost("registration_screen")
+    object EditScreen: AppNavHost("edit_screen")
     object MyProfile: AppNavHost("myProfile_screen")
     object News: AppNavHost("news_screen")
     object Friend: AppNavHost("friend_screen")
@@ -28,7 +30,9 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
         composable(AppNavHost.Friend.route){ FrendScreen(navController = navController,viewModel = mViewModel )}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
-        composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez) }
+//        composable(AppNavHost.Registration.route){ RegistrationScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez) }
+        composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = true) }//Для регистрации
+        composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = false) }//Для редактирования
 
     }
 }

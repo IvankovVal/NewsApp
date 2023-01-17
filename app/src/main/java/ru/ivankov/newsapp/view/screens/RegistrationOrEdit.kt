@@ -1,5 +1,6 @@
 package ru.ivankov.newsapp.view.screens
 
+
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
@@ -11,8 +12,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -35,8 +38,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.ivankov.newsapp.view.emailValidator
-import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.ui.theme.BadInput
 import ru.ivankov.newsapp.view.ui.theme.GoodInput
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
@@ -44,10 +47,11 @@ import java.io.File
 import java.io.InputStream
 
 @Composable
-fun RegistrationScreen(
+fun RegistrationOrEditScreen(
     navController: NavHostController,
     viewModel: NewsViewModel,
-    conRezolver: ContentResolver
+    conRezolver: ContentResolver,
+    isRegistration: Boolean
 
 ) {
 
@@ -106,7 +110,10 @@ fun RegistrationScreen(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
 
 // Поле для выбора аватара__________________________________________________________________________
@@ -162,12 +169,12 @@ fun RegistrationScreen(
                         }
                         //(1)Из Uri в файл
                         val myStream: InputStream? = conRezolver.openInputStream(imageUri!!)//это не файл
-                        val file:File = createTempFile()
+                        val file: File = createTempFile()
                         myStream.use{input -> file.outputStream().use{output -> input!!.copyTo(output)}}
 
                         val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
-                    Log.d("File ", "имя файла - $myFileName")
-               //     Log.d("File ", "имя файла - ${myFile. }")
+                        Log.d("File ", "имя файла - $myFileName")
+                        //     Log.d("File ", "имя файла - ${myFile. }")
 
                         //(2)Создать отправляемый файл
                         val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
@@ -178,10 +185,10 @@ fun RegistrationScreen(
                             requestBody)
 
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
-                     //  suspend {
-                           viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
-                       //  delay(1000)
-                      // }
+                        //  suspend {
+                        viewModel.uploadFile(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
+                        //  delay(1000)
+                        // }
                         Log.d("ava", "в аватаре - ${viewModel.gettedAvatar.value}")
 
                     },
@@ -239,6 +246,9 @@ fun RegistrationScreen(
 
             }
         }
+//--------------выбор нижнего бокса в зависимости от того для чего используется функция-------------
+        if (isRegistration){
+// Box  при регистрации----------------
         Box(
             modifier = Modifier
                 .background(Color.White, RectangleShape)
@@ -265,19 +275,44 @@ fun RegistrationScreen(
                             Toast.makeText(context, "Успешно", Toast.LENGTH_LONG).show()
                             navController.navigate(route = AppNavHost.Login.route) }
                     },
-                    modifier = Modifier.padding(12.dp)
-                )
+                    modifier = Modifier.padding(vertical = 12.dp).weight(1f))
                 { Text(text = "Зарегистрироваться") }
 //------------------Кнопка возврата на стартовую страницу-------------------------------------------
                 TextButton(
                     onClick = { navController.navigate(route = AppNavHost.Login.route) },
-                    modifier = Modifier.padding(12.dp)
+                    modifier = Modifier.padding(vertical = 12.dp).weight(1f))
+                { Text(text = "Назад") }
+            }
+        }
+// ---------------Иначе редактирование профиля------------------------------------------------------
+    }
+    else{
+        Box() { Row(modifier = Modifier.padding(all = 8.dp),horizontalArrangement = Arrangement.Center ) {
+//Кнопка редактирования -------------------------------------------------------------------------
+                TextButton(
+                    modifier = Modifier.padding(vertical = 12.dp).weight(1f),
+                    onClick = {
+                        viewModel.updateUser(
+                            avatar = "${viewModel.gettedAvatar.value}",
+                            registrationEmailState.value,
+                            registrationNameState.value,
+                            "${profileState.value?.token}" )
+                        navController.navigate(route = AppNavHost.News.route)
+                    }
+                ) {Text("Редактировать")}
+//Кнопка отмены редактирования ------------------------------------------------------------------
+                TextButton(
+                    onClick = { navController.navigate(route = AppNavHost.MyProfile.route) },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                        .weight(1f)
                 )
                 { Text(text = "Назад") }
-
             }
         }
     }
+    }
+
 
 }
 
@@ -293,4 +328,3 @@ fun RegistrationScreen(
 //        )
 //
 //    }
-//}

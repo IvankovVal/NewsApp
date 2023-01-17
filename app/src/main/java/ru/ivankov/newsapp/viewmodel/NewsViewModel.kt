@@ -95,18 +95,22 @@ class NewsViewModel : ViewModel() {
             )
             callAddUser?.enqueue(object : Callback<AuthorizationResponse?> {
                 override fun onResponse(call: Call<AuthorizationResponse?>, response: Response<AuthorizationResponse?>) {
-
                     if (response.code() == 200 || response.code() ==201){
-                    Log.d("Reg", "${response.code() }")
-                    _registrationMessage.value = ""}
+                        Log.d("Reg", "${response.code() }")
+                        _registrationMessage.value = ""
+                    }
 
                     else{
                         _registrationMessage.value = "Ошибка! Попробуйте иначе."
                     }
                 }
+
                 override fun onFailure(call: Call<AuthorizationResponse?>, t: Throwable) {
                     Log.d("Reg", "$t")
-                } }) } }
+                }
+            })
+        }
+    }
 
     //------------------Получение списка новостей----------------------------------------------------
     fun getNewsList(page: Int) {
@@ -190,7 +194,7 @@ class NewsViewModel : ViewModel() {
     }
 
     //------------------Аутентификация----------------------------------------------------
-    fun postAuthentification(email: String, password: String) {
+    fun postAuthentification(email: String, password: String, completion: () -> Unit) {
         viewModelScope.launch {
             //вызываем наш //(1) class ApiClient и метод из //(2) interface ApiInterface
             val postLogin =
@@ -219,6 +223,9 @@ class NewsViewModel : ViewModel() {
                         _loginMessage.value = "Ошибка. Попробуйте ещё раз."
                         Log.d(TAG, "Код - ${response.code()}")
 
+                    }
+                    launch(Dispatchers.Main) {
+                        completion()
                     }
                 }
 

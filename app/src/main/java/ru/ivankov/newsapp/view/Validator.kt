@@ -4,7 +4,7 @@ package ru.ivankov.newsapp.view
 fun emailValidator(email: String): Boolean {
     val emailEndsList =
         listOf("ru", "com", "org", "net", "su", "kz", "ua", "by")
-    var validate = false
+    var isValid = false
     if (email.isNotBlank() &&
         email.contains('@') &&
         !email.startsWith('@') &&
@@ -19,10 +19,10 @@ fun emailValidator(email: String): Boolean {
             if (parsedEmailEnd.size == 2 &&
                 parsedEmailEnd[0].length in 2..10 &&
                 parsedEmailEnd[1] in emailEndsList)
-                validate = true
+                isValid = true
         }
     }
-    return validate
+    return isValid
 }
 
 //fun passwordValidator(password: String): Boolean {

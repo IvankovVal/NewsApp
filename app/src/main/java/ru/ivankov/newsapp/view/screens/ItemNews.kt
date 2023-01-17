@@ -38,11 +38,9 @@ fun ItemNews(
     navController: NavHostController
 ) {
     val context = LocalContext.current
-
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка__________________________________________________________________________________
     Card(
-
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp,
         modifier = Modifier
@@ -51,6 +49,7 @@ fun ItemNews(
                     //взять из новости userId, добавить в качесве параметра в фукцию поиска поль-ля по Id
                     //Полученые данные положить в VM.user и перейдя в Профиль отобразить их
                     viewModel.getUserInfoById(item.userId)
+                    // тоже что в login
                     GlobalScope.launch(Dispatchers.Main) {
                         delay(1000)
 //                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
@@ -60,15 +59,12 @@ fun ItemNews(
                             "${item.username}",//"${viewModel.profileData.value?.name}",//дать автора
                             "",
                             emptyList()
-
                         )
                         navController.navigate(route = AppNavHost.Friend.route)
                     }
                 } else Toast
                     .makeText(context, "Войдите в профиль", Toast.LENGTH_LONG)
                     .show()
-
-
             }
             .padding(start = 5.dp, end = 5.dp)
             .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
@@ -91,7 +87,41 @@ fun ItemNews(
             Text(text = "${item.id} - ${item.title}")
             Text(text = "${item.description}")
         }
+    }
+}
+//_______Для новостей в профиле____________________
+@Composable
+fun ItemNewsProfile(
+    item: NewsContent,
+    viewModel: NewsViewModel,
+    navController: NavHostController
+) {
+    val context = LocalContext.current
+// -----------------------------------------------------------------------------------
+// Карточка пункта списка__________________________________________________________________________________
+    Card(
+        shape = RoundedCornerShape(15.dp),
+        elevation = 5.dp,
+        modifier = Modifier
+            .padding(start = 5.dp, end = 5.dp)
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(start = 20.dp)
+        ) {
 
+            AsyncImage(
+                model = "${item.image}",//profileState.value?.avatar,
+                contentDescription = "Картиночка",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+            )
+            Text(text = "${item.username}")
+            Text(text = "${item.id} - ${item.title}")
+            Text(text = "${item.description}")
+        }
     }
 }
 
