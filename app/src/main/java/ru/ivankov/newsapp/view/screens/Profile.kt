@@ -40,12 +40,9 @@ fun ProfileScreen(
     viewModel: NewsViewModel,
 ) {
     val context = LocalContext.current
-
     val profileState = viewModel.profileData.observeAsState()
-
     val newsState = viewModel.newsList.observeAsState(listOf())
     val pageState = viewModel.newsList.value!!.size / 15   //pageAmount.observeAsState()
-
     //основной контейнер(похоже можно было не создавать)
     val openDeleteUserDialog = remember { mutableStateOf(false) }
 //-------------------------------------------------------------

@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ru.ivankov.newsapp.view.MainActivity
 import ru.ivankov.newsapp.view.screens.*
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
@@ -32,7 +33,9 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = true) }//Для регистрации
         composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = false) }//Для редактирования
-        composable(AppNavHost.AddNewsScreen.route){ AddNews(navController = navController,viewModel = mViewModel, conRezolver = conRez) }
+        composable(AppNavHost.AddNewsScreen.route){ AddNews(navController = navController,viewModel = mViewModel
+            , conRezolver = conRez
+        ) }
 
     }
 }

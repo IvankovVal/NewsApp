@@ -151,12 +151,8 @@ fun NewsScreen(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "Профиль",
-
                         )
-
                 }
-
-
 //Кнопка добавить запись---------------------------------------
                 IconButton(
                     onClick = {
@@ -164,7 +160,6 @@ fun NewsScreen(
                             navController.navigate(route = AppNavHost.AddNewsScreen.route)
                         else
                     Toast.makeText(context, "Войдите в профиль", Toast.LENGTH_LONG).show()
-
                     },
                     modifier = Modifier
                         .padding(4.dp)
@@ -173,9 +168,7 @@ fun NewsScreen(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Добавить запись",
-
                         )
-
                 }
 //----------------------Кнопка поиск---------------------------------------
                 IconButton(
