@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ru.ivankov.newsapp.view.MainActivity
 import ru.ivankov.newsapp.view.screens.*
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
@@ -28,7 +27,7 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
     NavHost(navController = navController, startDestination = AppNavHost.News.route) {
 //route означает ссылка, в фигурных скобках задаём то, куда она ведёт destination
         composable(AppNavHost.MyProfile.route){ ProfileScreen(navController = navController,viewModel = mViewModel )}
-        composable(AppNavHost.Friend.route){ FrendScreen(navController = navController,viewModel = mViewModel )}
+        composable(AppNavHost.Friend.route){ FriendScreen(navController = navController,viewModel = mViewModel )}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = true) }//Для регистрации

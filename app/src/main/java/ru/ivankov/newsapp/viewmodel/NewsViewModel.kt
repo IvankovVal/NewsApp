@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -347,6 +348,26 @@ class NewsViewModel : ViewModel() {
             _guttedPicture.postValue(callUploadImage!!.body()!!.data)
             Log.d("upPic", "${callUploadImage!!.body()!!.data}")
             Log.d("upPic", "${callUploadImage!!.code()}")
+        }
+    }
+
+    fun deleteNews(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val callDeleteTask: Call<PostNewsResponse>? =
+                ApiService.instance?.api?.deleteNewsId(id, profileData.value!!.token)
+
+            callDeleteTask?.enqueue(object : Callback<PostNewsResponse?> {
+                override fun onFailure(call: Call<PostNewsResponse?>, t: Throwable) {
+                    // Toast.makeText( context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
+                }
+                override fun onResponse(
+                    call: Call<PostNewsResponse?>,
+                    response: Response<PostNewsResponse?>
+                ) {
+                    Log.d("delnews", "${response.code()}")
+
+                }
+            })
         }
     }
 

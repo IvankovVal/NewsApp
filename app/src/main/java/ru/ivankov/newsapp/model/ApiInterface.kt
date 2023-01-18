@@ -64,9 +64,16 @@ interface ApiInterface {
         @Query("tags") tags: List<String>? = null
     ): Call<NewsData>
 
+    //Создание новости
     @POST("/api/v1/news")
     fun postNews(
         @Body body: PostNewsBody,
+        @Header("Authorization") token: String
+    ): Call<PostNewsResponse>
+    //Удаление новости
+    @DELETE("https://news-feed.dunice-testing.com/api/v1/news/{id}")
+    fun deleteNewsId(
+        @Path("id") id: Int,
         @Header("Authorization") token: String
     ): Call<PostNewsResponse>
 

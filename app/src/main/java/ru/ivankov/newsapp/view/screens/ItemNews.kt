@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,6 +105,31 @@ fun ItemNews(
                     )
                 }
             }
+            if (item.username == viewModel.profileData.value?.name){
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(vertical = 5.dp, horizontal = 20.dp)
+                ) {
+                    //Кнопка удаления новости
+                    TextButton(
+                        onClick = { viewModel.deleteNews(item.id) },
+                        modifier = Modifier
+                            .weight(1f)
+
+                    ) { Text(text = "УДАЛИТЬ", fontSize = 12.sp) }
+                    //Кнопка РЕДАКТИРОВАНИЯ новости
+                    TextButton(
+                        onClick = {
+                                  TODO()
+                                  },
+                        modifier = Modifier
+                            .weight(1f)
+
+                    ) { Text(text = "РЕДАКТИРОВАТЬ", fontSize = 12.sp) }
+                }
+            }
         }
     }
 }
@@ -156,6 +182,29 @@ fun ItemNewsProfile(
                         fontFamily = FontFamily.Monospace,
                         fontStyle = FontStyle.Italic,
                     )
+                }
+            }
+            if (item.username == viewModel.profileData.value!!.name){
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(vertical = 5.dp, horizontal = 20.dp)
+                ) {
+                    //Кнопка удаления новости
+                    TextButton(
+                        onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
+                        modifier = Modifier
+                            .weight(1f)
+
+                    ) { Text(text = "УДАЛИТЬ", fontSize = 12.sp) }
+                    //Кнопка РЕДАКТИРОВАНИЯ новости
+                    TextButton(
+                        onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
+                        modifier = Modifier
+                            .weight(1f)
+
+                    ) { Text(text = "РЕДАКТИРОВАТЬ", fontSize = 12.sp) }
                 }
             }
         }
