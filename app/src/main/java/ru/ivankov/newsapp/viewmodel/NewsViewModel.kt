@@ -24,6 +24,9 @@ import ru.ivankov.newsapp.model.*
 class NewsViewModel : ViewModel() {
     //------------------Свойства----------------------------------------------------
 
+    var _editableNews: Int = 5
+    val editableNews = MutableLiveData (_editableNews)
+
     //Список новостей куда принять
     private val _newsList: MutableLiveData<List<NewsContent>> by lazy { MutableLiveData<List<NewsContent>>() }
 
@@ -370,6 +373,29 @@ class NewsViewModel : ViewModel() {
             })
         }
     }
+
+    fun updateNews(newsId: Int,
+                    image: String,
+                    description: String,
+                    tags: List<String>,
+                    title: String,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val callupdateNews = ApiService.instance?.api?.editNewsRequest(
+                id = newsId,
+                body = PostNewsBody(image = image, description = description, tags = tags, title = title),
+                token = profileData.value!!.token
+            )
+
+            callupdateNews?.enqueue(object : Callback<PostNewsResponse> {
+                override fun onResponse(call: Call<PostNewsResponse>, response: Response<PostNewsResponse>) {
+                    Log.d("editNews", "${response.code()}")
+                }
+                override fun onFailure(call: Call<PostNewsResponse>, t: Throwable) {
+                    // Toast.makeText(context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
+                }
+            })
+        }}
 
 //class ViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
 //    override fun <T : ViewModel?> create(modelClass: Class<T>): T {

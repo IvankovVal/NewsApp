@@ -76,6 +76,13 @@ interface ApiInterface {
         @Path("id") id: Int,
         @Header("Authorization") token: String
     ): Call<PostNewsResponse>
+//Редактирование новости
+    @PUT("/api/v1/news/{id}")
+    fun editNewsRequest(
+        @Path("id") id: Int,
+        @Body body: PostNewsBody,
+        @Header("Authorization") token: String
+    ): Call<PostNewsResponse>
 
     //Для получение данных пользователя по Id
     @GET("/api/v1/user/{id}")

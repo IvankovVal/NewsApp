@@ -1,6 +1,8 @@
 package ru.ivankov.newsapp.view.screens
 
+import android.graphics.fonts.Font
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +12,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,7 @@ import kotlinx.coroutines.launch
 import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.ui.theme.BadInput
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
@@ -40,13 +45,18 @@ fun ItemNews(
     navController: NavHostController
 ) {
     val context = LocalContext.current
+    val isDeleted = remember { mutableStateOf(false)}
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка__________________________________________________________________________________
     Card(
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp,
         modifier = Modifier
-            .clickable {
+            .background(
+                color = if (isDeleted.value) BadInput
+                else Color.White
+            )
+            .clickable(enabled = !isDeleted.value) {
                 if (viewModel.profileData.value != null) {
                     //взять из новости userId, добавить в качесве параметра в фукцию поиска поль-ля по Id
                     //Полученые данные положить в VM.user и перейдя в Профиль отобразить их
@@ -68,13 +78,14 @@ fun ItemNews(
                     .makeText(context, "Войдите в профиль", Toast.LENGTH_LONG)
                     .show()
             }
-            .padding(start = 5.dp, end = 5.dp)
-            .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
+            .padding(horizontal = 5.dp, vertical = 3.dp)
             .fillMaxWidth()
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(start = 20.dp)
+                .background(color = if (isDeleted.value) BadInput
+                else Color.White)
         ) {
 
             AsyncImage(
@@ -83,12 +94,13 @@ fun ItemNews(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
             )
-// Автор новости
-            Text(text = "${item.username}")
-//Id новости
-            Text(text = "${item.id} - ${item.title}")
+
+//Id и название новости
+            Text(text = "${item.id} - ${item.title}",fontSize = 20.sp,fontStyle = FontStyle.Normal)
 // Содержание новости
             Text(text = "${item.description}")
+// Автор новости
+            Text(text = "${item.username}", fontStyle = FontStyle.Italic)
 // Тэги
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -114,7 +126,11 @@ fun ItemNews(
                 ) {
                     //Кнопка удаления новости
                     TextButton(
-                        onClick = { viewModel.deleteNews(item.id) },
+                        onClick = {
+                            isDeleted.value = true
+                            viewModel.deleteNews(item.id)
+                                  },
+                        enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
 
@@ -122,8 +138,11 @@ fun ItemNews(
                     //Кнопка РЕДАКТИРОВАНИЯ новости
                     TextButton(
                         onClick = {
-                                  TODO()
+                            viewModel._editableNews = item.id
+                            navController.navigate(route = AppNavHost.EditNewsScreen.route)
+
                                   },
+                        enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
 
@@ -141,6 +160,8 @@ fun ItemNewsProfile(
     navController: NavHostController
 ) {
     val context = LocalContext.current
+    val isDeleted = remember { mutableStateOf(false)}
+
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка____________________________________________________________________________
     Card(
@@ -154,6 +175,10 @@ fun ItemNewsProfile(
         Column(
             modifier = Modifier
                 .padding(start = 20.dp)
+                .background(
+                    color = if (isDeleted.value) BadInput
+                    else Color.White
+                )
         ) {
 
             AsyncImage(
@@ -164,8 +189,8 @@ fun ItemNewsProfile(
             )
             // Автор новости
             Text(text = item.username)
-//Id новости
-            Text(text = "${item.id} - ${item.title}")
+//Id новости и название
+            Text(text = "${item.id} - ${item.title}",fontSize = 20.sp,fontStyle = FontStyle.Normal)
 // Содержание новости
             Text(text = item.description)
 // Тэги
@@ -193,14 +218,21 @@ fun ItemNewsProfile(
                 ) {
                     //Кнопка удаления новости
                     TextButton(
-                        onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
+                        onClick = {
+                            isDeleted.value = true
+                            viewModel.deleteNews(item.id)
+                        },
+                        enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
 
                     ) { Text(text = "УДАЛИТЬ", fontSize = 12.sp) }
                     //Кнопка РЕДАКТИРОВАНИЯ новости
                     TextButton(
-                        onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
+                        onClick = {
+                            navController.navigate(route = AppNavHost.EditNewsScreen.route)
+                        },
+                        enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
 

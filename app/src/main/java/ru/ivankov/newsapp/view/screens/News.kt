@@ -84,17 +84,7 @@ fun NewsScreen(
 
 
 // Карточка для  отображения новостей---------------------------------------------------------------
-        Card(
-
-            shape = RoundedCornerShape(15.dp),
-            elevation = 5.dp,
-            modifier = Modifier
-                .weight(8.5f)
-                .padding(start = 5.dp, end = 5.dp)
-                .border(2.dp, Color.Black, shape = RoundedCornerShape(15.dp))
-//               .fillMaxSize()
-
-        ) {
+        Box( modifier = Modifier.background(Color.White).fillMaxWidth().weight(8.5f)) {
 // ----------------------Список новостей-----------------------------
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,

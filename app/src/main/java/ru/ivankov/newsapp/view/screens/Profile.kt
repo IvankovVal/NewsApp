@@ -224,6 +224,7 @@ fun ProfileScreen(
         ) {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
+                reverseLayout = true,//Для обратного порядка отображения списка новостей
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(color = Color.White)

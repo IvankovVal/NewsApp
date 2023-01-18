@@ -52,7 +52,6 @@ fun RegistrationOrEditScreen(
     viewModel: NewsViewModel,
     conRezolver: ContentResolver,
     isRegistration: Boolean
-
 ) {
 
     val context = LocalContext.current

@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val vmNews = ViewModelProvider(this)[NewsViewModel::class.java]
                 val navController = rememberNavController()
-
                 val contentResolver = contentResolver//предадим его в функцию регистрации
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {

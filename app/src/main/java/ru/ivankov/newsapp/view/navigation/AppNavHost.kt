@@ -13,6 +13,7 @@ sealed class AppNavHost(val route: String) {
     object Login: AppNavHost("start_screen")
     object RegistrationScreen: AppNavHost("registration_screen")
     object AddNewsScreen: AppNavHost("add_news_screen")
+    object EditNewsScreen: AppNavHost("edit_news_screen")
     object EditScreen: AppNavHost("edit_screen")
     object MyProfile: AppNavHost("myProfile_screen")
     object News: AppNavHost("news_screen")
@@ -32,9 +33,8 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = true) }//Для регистрации
         composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = false) }//Для редактирования
-        composable(AppNavHost.AddNewsScreen.route){ AddNews(navController = navController,viewModel = mViewModel
-            , conRezolver = conRez
-        ) }
+        composable(AppNavHost.AddNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, conRezolver = conRez, isAddNews = true) }//Для добавления новости
+        composable(AppNavHost.EditNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, conRezolver = conRez, isAddNews = false) }//Для редактирования новости
 
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,10 +42,11 @@ import java.io.File
 import java.io.InputStream
 
 @Composable
-fun AddNews(
+fun AddOrEditNews(
     navController: NavHostController,
     viewModel: NewsViewModel,
     conRezolver: ContentResolver,
+    isAddNews: Boolean
 ) {
     val context = LocalContext.current
     //состояние полей при создании новости
@@ -58,8 +60,10 @@ fun AddNews(
     val secondTagState = remember { mutableStateOf("") }
     val thirdTagState = remember { mutableStateOf("") }
     val fourthTagState = remember { mutableStateOf("") }
-   // val newsTagsList = remember { mutableListOf<String>() }
+    // val newsTagsList = remember { mutableListOf<String>() }
     val newsTagsList = remember { mutableStateOf(mutableListOf("")) }
+    //Чтобы знать редактируемую новость
+    val editableNewsState = viewModel.editableNews?.observeAsState(0)
 
 
 
@@ -130,8 +134,9 @@ fun AddNews(
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-            ) {TextButton(onClick = { imagePicker.launch("image/*")})
-            {Text(text = "Выбрать картинку") }
+            ) {
+                TextButton(onClick = { imagePicker.launch("image/*") })
+                { Text(text = "Выбрать картинку") }
 // --------------------Кнопка сохранить аватар
                 TextButton(
                     onClick = {
@@ -144,7 +149,8 @@ fun AddNews(
                             var name = ""
                             val returnCursor = this.query(fileUri, null, null, null, null)
                             if (returnCursor != null) {
-                                val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                val nameIndex =
+                                    returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                                 returnCursor.moveToFirst()
                                 name = returnCursor.getString(nameIndex)
                                 returnCursor.close()
@@ -152,9 +158,12 @@ fun AddNews(
                             return name
                         }
                         //(1)Из Uri в файл
-                        val myStream: InputStream? = conRezolver.openInputStream(imageUri!!)//это не файл
+                        val myStream: InputStream? =
+                            conRezolver.openInputStream(imageUri!!)//это не файл
                         val file: File = createTempFile()
-                        myStream.use{input -> file.outputStream().use{output -> input!!.copyTo(output)}}
+                        myStream.use { input ->
+                            file.outputStream().use { output -> input!!.copyTo(output) }
+                        }
 
                         val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
                         Log.d("File ", "имя файла - $myFileName")
@@ -166,7 +175,8 @@ fun AddNews(
                         val filePart = MultipartBody.Part.createFormData(
                             "file",
                             " $myFileName",
-                            requestBody)
+                            requestBody
+                        )
 
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
                         viewModel.uploadPicture(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
@@ -208,7 +218,8 @@ fun AddNews(
                         openAddTagsDialog.value = true
                     }
                 ) {
-                    Text("Добавить тэги") }
+                    Text("Добавить тэги")
+                }
             }
 
         }
@@ -219,36 +230,77 @@ fun AddNews(
                 .fillMaxWidth()
                 .weight(1f),
             contentAlignment = Alignment.Center
-        ) { Row {
-            TextButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(12.dp),
+        ) {
+// Если перешли из NewsScreen для добавления-------------------------------------
+            if (isAddNews) {
+                Row {
+                    TextButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(12.dp),
 
-                onClick = {
-                    viewModel.insertNews(
-                        editDescriptionState.value,
-                        image = if (viewModel.guttedPicture.value !== "")"${viewModel.guttedPicture.value}"
-                        else "Пустая",
-
-                        tags = if (newsTagsList.value !== listOf("")){newsTagsList.value}
-                        else {emptyList()},
-                        editTitleState.value
-                    )
-                    viewModel.getNewsList(1)
-                    navController.navigate(route = AppNavHost.News.route)
+                        onClick = {
+                            viewModel.insertNews(
+                                description = editDescriptionState.value,
+                                image = if (viewModel.guttedPicture.value !== "") "${viewModel.guttedPicture.value}" else "Пустая",
+                                tags = if (newsTagsList.value[0] !== "") {
+                                    newsTagsList.value
+                                } else {
+                                    emptyList()
+                                },
+                                title = editTitleState.value
+                            )
+                            viewModel.getNewsList(1)
+                            navController.navigate(route = AppNavHost.News.route)
+                        }
+                    ) {
+                        Text("Создать")
+                    }
+                    //Кнопка отменить
+                    TextButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(12.dp),
+                        onClick = { navController.navigate(route = AppNavHost.News.route) }
+                    ) { Text("Отменить") }
                 }
-            ) {
-                Text("Создать")
             }
-            //Кнопка отменить
-            TextButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(12.dp),
-                onClick = { navController.navigate(route = AppNavHost.News.route)}
-            ) {Text("Отменить")}
-        }}
+// Если перешли из NewsItem для редактирования-------------------------------------
+            else {
+                Row {
+                    TextButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(12.dp),
+
+                        onClick = {
+                            viewModel.updateNews(
+                                newsId = editableNewsState!!.value ,
+                                image = if (viewModel.guttedPicture.value !== "") "${viewModel.guttedPicture.value}" else "Пустая",
+                                description = editDescriptionState.value,
+                                tags = if (newsTagsList.value[0] !== "") {
+                            newsTagsList.value
+                        } else {
+                            emptyList()
+                        },
+                                title = editTitleState.value
+                            )
+                            //и вернуться назад
+                        }
+                    ) {
+                        Text("Редактировать")
+                    }
+                    //Кнопка отменить
+                    TextButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(12.dp),
+                        onClick = { navController.navigate(route = AppNavHost.News.route) }
+                    ) { Text("Отменить") }
+                }
+            }
+
+        }
     }
     //UIEnd---------------------------------------------------------------------------------------
 //Ниже диалог добавления тэгов----------------------------------------------------------------------
@@ -288,10 +340,10 @@ fun AddNews(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             newsTagsList.value.removeAt(0)
-                            if (firstTagState.value !== "")newsTagsList.value.add(firstTagState.value)
-                            if (secondTagState.value !== "")newsTagsList.value.add(secondTagState.value)
-                            if (thirdTagState.value !== "")newsTagsList.value.add(thirdTagState.value)
-                            if (fourthTagState.value !== "")newsTagsList.value.add(fourthTagState.value)
+                            if (firstTagState.value !== "") newsTagsList.value.add(firstTagState.value)
+                            if (secondTagState.value !== "") newsTagsList.value.add(secondTagState.value)
+                            if (thirdTagState.value !== "") newsTagsList.value.add(thirdTagState.value)
+                            if (fourthTagState.value !== "") newsTagsList.value.add(fourthTagState.value)
 
                             openAddTagsDialog.value = false
                         }
