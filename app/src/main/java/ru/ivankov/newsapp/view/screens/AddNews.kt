@@ -130,16 +130,8 @@ fun AddNews(
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-            ) {
-                TextButton(
-                    onClick = {
-                        imagePicker.launch("image/*")
-                    },
-                ) {
-                    Text(
-                        text = "Выбрать картинки"
-                    )
-                }
+            ) {TextButton(onClick = { imagePicker.launch("image/*")})
+            {Text(text = "Выбрать картинку") }
 // --------------------Кнопка сохранить аватар
                 TextButton(
                     onClick = {
@@ -236,13 +228,15 @@ fun AddNews(
                 onClick = {
                     viewModel.insertNews(
                         editDescriptionState.value,
-                        image = "${viewModel.guttedPicture.value}",
-                        newsTagsList.value,
+                        image = if (viewModel.guttedPicture.value !== "")"${viewModel.guttedPicture.value}"
+                        else "Пустая",
+
+                        tags = if (newsTagsList.value !== listOf("")){newsTagsList.value}
+                        else {emptyList()},
                         editTitleState.value
                     )
                     viewModel.getNewsList(1)
                     navController.navigate(route = AppNavHost.News.route)
-
                 }
             ) {
                 Text("Создать")
@@ -252,15 +246,10 @@ fun AddNews(
                 modifier = Modifier
                     .weight(1f)
                     .padding(12.dp),
-                onClick = {
-                    navController.navigate(route = AppNavHost.News.route)
-                }
-            ) {
-                Text("Отменить")
-            }
+                onClick = { navController.navigate(route = AppNavHost.News.route)}
+            ) {Text("Отменить")}
         }}
     }
-
     //UIEnd---------------------------------------------------------------------------------------
 //Ниже диалог добавления тэгов----------------------------------------------------------------------
 
@@ -298,11 +287,11 @@ fun AddNews(
                     TextButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
-
-                            newsTagsList.value.add(firstTagState.value)
-                            newsTagsList.value.add(secondTagState.value)
-                            newsTagsList.value.add(thirdTagState.value)
-                            newsTagsList.value.add(fourthTagState.value)
+                            newsTagsList.value.removeAt(0)
+                            if (firstTagState.value !== "")newsTagsList.value.add(firstTagState.value)
+                            if (secondTagState.value !== "")newsTagsList.value.add(secondTagState.value)
+                            if (thirdTagState.value !== "")newsTagsList.value.add(thirdTagState.value)
+                            if (fourthTagState.value !== "")newsTagsList.value.add(fourthTagState.value)
 
                             openAddTagsDialog.value = false
                         }

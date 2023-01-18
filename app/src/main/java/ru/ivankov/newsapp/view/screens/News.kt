@@ -133,7 +133,6 @@ fun NewsScreen(
                         } else{
                             GlobalScope.launch(Dispatchers.Main) {
                                 delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
                                 viewModel.searchNews(
                                     1,
                                     15,
@@ -193,8 +192,6 @@ fun NewsScreen(
                                     value = editAuthorState.value,
                                     onValueChange = { editAuthorState.value = removeSpace(it) },
                                     label = { Text("Автор") })
-
-
                                 TextField(
                                     value = editWordState.value,
                                     onValueChange = { editWordState.value = removeSpace(it) },
@@ -204,9 +201,7 @@ fun NewsScreen(
                                     onValueChange = { editTagState.value = removeSpace(it) },
                                     label = { Text("tags") })
                             }
-
                         },
-
                         buttons = {
                             Row(
                                 modifier = Modifier.padding(all = 8.dp),
@@ -222,7 +217,6 @@ fun NewsScreen(
                                             editAuthorState.value,
                                             editWordState.value,
                                             emptyList()
-
                                         )
                                         navController.navigate(route = AppNavHost.News.route)
                                         openFindNewsDialog.value = false
@@ -242,11 +236,9 @@ fun NewsScreen(
                                     Text("Отмена")
                                 }
                             }
-
                         }
                     )
 //-----------------------Конец Alert Dialog---------------------------------------------------------
-
                 }
             }
         }
