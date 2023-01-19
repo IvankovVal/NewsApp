@@ -64,7 +64,6 @@ fun ItemNews(
                     // тоже что в login
                     GlobalScope.launch(Dispatchers.Main) {
                         delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
                         viewModel.searchNews(
                             1,
                             15,
@@ -87,14 +86,12 @@ fun ItemNews(
                 .background(color = if (isDeleted.value) BadInput
                 else Color.White)
         ) {
-
             AsyncImage(
                 model = "${item.image}",//profileState.value?.avatar,
                 contentDescription = "Картиночка",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
             )
-
 //Id и название новости
             Text(text = "${item.id} - ${item.title}",fontSize = 20.sp,fontStyle = FontStyle.Normal)
 // Содержание новости
@@ -133,12 +130,11 @@ fun ItemNews(
                         enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
-
                     ) { Text(text = "УДАЛИТЬ", fontSize = 12.sp) }
                     //Кнопка РЕДАКТИРОВАНИЯ новости
                     TextButton(
                         onClick = {
-                            viewModel._editableNews = item.id
+                            viewModel._editableNews.value = item.id
                             navController.navigate(route = AppNavHost.EditNewsScreen.route)
 
                                   },

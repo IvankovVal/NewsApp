@@ -135,8 +135,6 @@ fun RegistrationOrEditScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentDescription = "Selected image",
                 )
-
-
             }
             Row(
                 modifier = Modifier

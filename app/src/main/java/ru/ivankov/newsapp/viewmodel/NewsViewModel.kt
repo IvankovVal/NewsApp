@@ -24,8 +24,8 @@ import ru.ivankov.newsapp.model.*
 class NewsViewModel : ViewModel() {
     //------------------Свойства----------------------------------------------------
 
-    var _editableNews: Int = 5
-    val editableNews = MutableLiveData (_editableNews)
+    var _editableNews = MutableLiveData(1)
+    val editableNews: MutableLiveData<Int> = _editableNews
 
     //Список новостей куда принять
     private val _newsList: MutableLiveData<List<NewsContent>> by lazy { MutableLiveData<List<NewsContent>>() }
