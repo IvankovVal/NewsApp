@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -65,6 +66,8 @@ fun RegistrationOrEditScreen(
     } else {
         BadInput
     }
+    val isPictureSaved = remember { mutableStateOf(false) }
+
     val registrationPasswordState = remember { mutableStateOf("") }
     val registrationAvatarState = remember { mutableStateOf("") }
     val requestState = remember { mutableStateOf("") }
@@ -112,6 +115,7 @@ fun RegistrationOrEditScreen(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
+            .border(width = 3.dp, color = if (!isPictureSaved.value) Color.White else Color.Green)
             .verticalScroll(rememberScrollState())
     ) {
 
@@ -159,7 +163,8 @@ fun RegistrationOrEditScreen(
                             var name = ""
                             val returnCursor = this.query(fileUri, null, null, null, null)
                             if (returnCursor != null) {
-                                val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                val nameIndex =
+                                    returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                                 returnCursor.moveToFirst()
                                 name = returnCursor.getString(nameIndex)
                                 returnCursor.close()
@@ -167,9 +172,12 @@ fun RegistrationOrEditScreen(
                             return name
                         }
                         //(1)Из Uri в файл
-                        val myStream: InputStream? = conRezolver.openInputStream(imageUri!!)//это не файл
+                        val myStream: InputStream? =
+                            conRezolver.openInputStream(imageUri!!)//это не файл
                         val file: File = createTempFile()
-                        myStream.use{input -> file.outputStream().use{output -> input!!.copyTo(output)}}
+                        myStream.use { input ->
+                            file.outputStream().use { output -> input!!.copyTo(output) }
+                        }
 
                         val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
                         Log.d("File ", "имя файла - $myFileName")
@@ -181,7 +189,8 @@ fun RegistrationOrEditScreen(
                         val filePart = MultipartBody.Part.createFormData(
                             "file",
                             " $myFileName",
-                            requestBody)
+                            requestBody
+                        )
 
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
                         //  suspend {
@@ -246,73 +255,87 @@ fun RegistrationOrEditScreen(
             }
         }
 //--------------выбор нижнего бокса в зависимости от того для чего используется функция-------------
-        if (isRegistration){
+        if (isRegistration) {
 // Box  при регистрации----------------
-        Box(
-            modifier = Modifier
-                .background(Color.White, RectangleShape)
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-
+            Box(
+                modifier = Modifier
+                    .background(Color.White, RectangleShape)
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
             ) {
+                Row(
+
+                ) {
 //------------------Кнопка регистрации--------------------------------------------------------------
-                TextButton(
-                    onClick = {
-                        viewModel.postRegistration(
-                            avatar = "${viewModel.gettedAvatar.value}",
-                            registrationEmailState.value,
-                            registrationNameState.value,
-                            registrationPasswordState.value,
-                            role = "user"
-                        )
-                        Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
-                        requestState.value = "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
-                        if(messageState.value == ""){
-                            Toast.makeText(context, "Успешно", Toast.LENGTH_LONG).show()
-                            navController.navigate(route = AppNavHost.Login.route) }
-                    },
-                    modifier = Modifier.padding(vertical = 12.dp).weight(1f))
-                { Text(text = "Зарегистрироваться") }
+                    TextButton(
+                        onClick = {
+                            viewModel.postRegistration(
+                                avatar = "${viewModel.gettedAvatar.value}",
+                                registrationEmailState.value,
+                                registrationNameState.value,
+                                registrationPasswordState.value,
+                                role = "user"
+                            )
+                            Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
+                            requestState.value =
+                                "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
+                            if (messageState.value == "") {
+                                Toast.makeText(context, "Успешно", Toast.LENGTH_LONG).show()
+                                navController.navigate(route = AppNavHost.Login.route)
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .weight(1f)
+                    )
+                    { Text(text = "Зарегистрироваться") }
 //------------------Кнопка возврата на стартовую страницу-------------------------------------------
-                TextButton(
-                    onClick = { navController.navigate(route = AppNavHost.Login.route) },
-                    modifier = Modifier.padding(vertical = 12.dp).weight(1f))
-                { Text(text = "Назад") }
+                    TextButton(
+                        onClick = { navController.navigate(route = AppNavHost.Login.route) },
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .weight(1f)
+                    )
+                    { Text(text = "Назад") }
+                }
             }
-        }
 // ---------------Иначе редактирование профиля------------------------------------------------------
-    }
-    else{
-        Box() { Row(modifier = Modifier.padding(all = 8.dp),horizontalArrangement = Arrangement.Center ) {
+        } else {
+            Box() {
+                Row(
+                    modifier = Modifier.padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
 //Кнопка редактирования -------------------------------------------------------------------------
-                TextButton(
-                    modifier = Modifier.padding(vertical = 12.dp).weight(1f),
-                    onClick = {
-                        viewModel.updateUser(
-                            avatar = "${viewModel.gettedAvatar.value}",
-                            registrationEmailState.value,
-                            registrationNameState.value,
-                            "${profileState.value?.token}" )
-                        //Выйти из профиля
-                        viewModel._profileData.value = null
-                        viewModel.getNewsList(1)
-                        navController.navigate(route = AppNavHost.News.route)
-                    }
-                ) {Text("Редактировать")}
+                    TextButton(
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .weight(1f),
+                        onClick = {
+                            viewModel.updateUser(
+                                avatar = "${viewModel.gettedAvatar.value}",
+                                registrationEmailState.value,
+                                registrationNameState.value,
+                                "${profileState.value?.token}"
+                            )
+                            //Выйти из профиля
+                            viewModel._profileData.value = null
+                            viewModel.getNewsList(1)
+                            navController.navigate(route = AppNavHost.News.route)
+                        }
+                    ) { Text("Редактировать") }
 //Кнопка отмены редактирования ------------------------------------------------------------------
-                TextButton(
-                    onClick = { navController.navigate(route = AppNavHost.MyProfile.route) },
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .weight(1f)
-                )
-                { Text(text = "Назад") }
+                    TextButton(
+                        onClick = { navController.navigate(route = AppNavHost.MyProfile.route) },
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .weight(1f)
+                    )
+                    { Text(text = "Назад") }
+                }
             }
         }
-    }
     }
 
 

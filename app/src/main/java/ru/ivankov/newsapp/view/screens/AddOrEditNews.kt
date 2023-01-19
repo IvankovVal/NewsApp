@@ -12,6 +12,7 @@ import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
@@ -60,12 +61,11 @@ fun AddOrEditNews(
     val secondTagState = remember { mutableStateOf("") }
     val thirdTagState = remember { mutableStateOf("") }
     val fourthTagState = remember { mutableStateOf("") }
-    // val newsTagsList = remember { mutableListOf<String>() }
     val newsTagsList = remember { mutableStateOf(mutableListOf("")) }
     //Чтобы знать редактируемую новость
-    val editableNewsState = viewModel.editableNews?.observeAsState(0)
-
-
+    val editableNewsState = viewModel.editableNews.observeAsState(0)
+    //Реакция на сохранение картинки
+    val isPictureSaved = remember { mutableStateOf(false) }
 
     //для картиночки
     /*(1)Нам нужно отслеживать возвращенный URI,
@@ -83,9 +83,7 @@ fun AddOrEditNews(
             hasImage = uri != null
             imageUri = uri
         }
-
     )
-
     //Расширение класса Uri для добавления метода toImageFile
     fun Uri.toImageFile(context: Context): File? {
         val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
@@ -125,7 +123,7 @@ fun AddOrEditNews(
                 // (5) Если есть,то отображаем изображение
                 AsyncImage(
                     model = imageUri,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().border(width = 3.dp, color = if (!isPictureSaved.value) Color.White else Color.Green),
                     contentDescription = "Selected image",
                 )
 
@@ -145,6 +143,7 @@ fun AddOrEditNews(
                         //и значение этого состояния добавить в запрос на регистрацию
 
                         //функция расширения для получения имени файла
+                       isPictureSaved.value = true
                         fun ContentResolver.getFileName(fileUri: Uri): String {
                             var name = ""
                             val returnCursor = this.query(fileUri, null, null, null, null)
