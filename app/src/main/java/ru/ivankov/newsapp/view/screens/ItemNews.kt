@@ -35,6 +35,7 @@ import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.ui.theme.BadInput
+import ru.ivankov.newsapp.view.ui.theme.DefaultBack
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 
@@ -45,7 +46,7 @@ fun ItemNews(
     navController: NavHostController
 ) {
     val context = LocalContext.current
-    val isDeleted = remember { mutableStateOf(false)}
+    val isDeleted = remember { mutableStateOf(false) }
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка__________________________________________________________________________________
     Card(
@@ -54,7 +55,7 @@ fun ItemNews(
         modifier = Modifier
             .background(
                 color = if (isDeleted.value) BadInput
-                else Color.White
+                else DefaultBack
             )
             .clickable(enabled = !isDeleted.value) {
                 if (viewModel.profileData.value != null) {
@@ -77,14 +78,16 @@ fun ItemNews(
                     .makeText(context, "Войдите в профиль", Toast.LENGTH_LONG)
                     .show()
             }
-            .padding(horizontal = 5.dp, vertical = 3.dp)
+            .padding(horizontal = 5.dp, vertical = 4.dp)
             .fillMaxWidth()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .background(color = if (isDeleted.value) BadInput
-                else Color.White)
+                .background(
+                    color = if (isDeleted.value) BadInput
+                    else Color.White
+                )
         ) {
             AsyncImage(
                 model = "${item.image}",//profileState.value?.avatar,
@@ -93,7 +96,11 @@ fun ItemNews(
                 modifier = Modifier
             )
 //Id и название новости
-            Text(text = "${item.id} - ${item.title}",fontSize = 20.sp,fontStyle = FontStyle.Normal)
+            Text(
+                text = "${item.id} - ${item.title}",
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Normal
+            )
 // Содержание новости
             Text(text = "${item.description}")
 // Автор новости
@@ -114,7 +121,7 @@ fun ItemNews(
                     )
                 }
             }
-            if (item.username == viewModel.profileData.value?.name){
+            if (item.username == viewModel.profileData.value?.name) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -126,7 +133,7 @@ fun ItemNews(
                         onClick = {
                             isDeleted.value = true
                             viewModel.deleteNews(item.id)
-                                  },
+                        },
                         enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
@@ -134,10 +141,10 @@ fun ItemNews(
                     //Кнопка РЕДАКТИРОВАНИЯ новости
                     TextButton(
                         onClick = {
-                            viewModel._editableNews.value = item.id
+                            viewModel._editableNews.value = item
                             navController.navigate(route = AppNavHost.EditNewsScreen.route)
 
-                                  },
+                        },
                         enabled = !isDeleted.value,
                         modifier = Modifier
                             .weight(1f)
@@ -148,6 +155,7 @@ fun ItemNews(
         }
     }
 }
+
 //_______Для новостей в профиле____________________
 @Composable
 fun ItemNewsProfile(
@@ -156,7 +164,7 @@ fun ItemNewsProfile(
     navController: NavHostController
 ) {
     val context = LocalContext.current
-    val isDeleted = remember { mutableStateOf(false)}
+    val isDeleted = remember { mutableStateOf(false) }
 
 // -----------------------------------------------------------------------------------
 // Карточка пункта списка____________________________________________________________________________
@@ -164,13 +172,18 @@ fun ItemNewsProfile(
         shape = RoundedCornerShape(15.dp),
         elevation = 5.dp,
         modifier = Modifier
-            .padding(start = 5.dp, end = 5.dp)
-            .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
+            .background(
+                color = if (isDeleted.value) BadInput
+                else DefaultBack
+            )
             .fillMaxWidth()
-    ) {
+            .padding(horizontal = 5.dp, vertical = 4.dp)
+
+    )
+    {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(start = 20.dp)
                 .background(
                     color = if (isDeleted.value) BadInput
                     else Color.White
@@ -186,7 +199,11 @@ fun ItemNewsProfile(
             // Автор новости
             Text(text = item.username)
 //Id новости и название
-            Text(text = "${item.id} - ${item.title}",fontSize = 20.sp,fontStyle = FontStyle.Normal)
+            Text(
+                text = "${item.id} - ${item.title}",
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Normal
+            )
 // Содержание новости
             Text(text = item.description)
 // Тэги
@@ -205,7 +222,7 @@ fun ItemNewsProfile(
                     )
                 }
             }
-            if (item.username == viewModel.profileData.value!!.name){
+            if (item.username == viewModel.profileData.value!!.name) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,

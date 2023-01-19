@@ -31,10 +31,10 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
         composable(AppNavHost.Friend.route){ FriendScreen(navController = navController,viewModel = mViewModel )}
         composable(AppNavHost.News.route){ NewsScreen(navController = navController,viewModel = mViewModel)}
         composable(AppNavHost.Login.route){ LoginScreen(navController = navController,viewModel = mViewModel)}
-        composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = true) }//Для регистрации
-        composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, conRezolver = conRez,isRegistration = false) }//Для редактирования
-        composable(AppNavHost.AddNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, conRezolver = conRez, isAddNews = true) }//Для добавления новости
-        composable(AppNavHost.EditNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, conRezolver = conRez, isAddNews = false) }//Для редактирования новости
+        composable(AppNavHost.RegistrationScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, contentResolver = conRez,isRegistration = true) }//Для регистрации
+        composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, contentResolver = conRez,isRegistration = false) }//Для редактирования
+        composable(AppNavHost.AddNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, contentResolver = conRez, isAddNews = true) }//Для добавления новости
+        composable(AppNavHost.EditNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, contentResolver = conRez, isAddNews = false) }//Для редактирования новости
 
     }
 }

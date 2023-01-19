@@ -2,9 +2,7 @@ package ru.ivankov.newsapp.view.screens
 
 
 import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
@@ -51,7 +49,7 @@ import java.io.InputStream
 fun RegistrationOrEditScreen(
     navController: NavHostController,
     viewModel: NewsViewModel,
-    conRezolver: ContentResolver,
+    contentResolver: ContentResolver,
     isRegistration: Boolean
 ) {
 
@@ -69,7 +67,6 @@ fun RegistrationOrEditScreen(
     val isPictureSaved = remember { mutableStateOf(false) }
 
     val registrationPasswordState = remember { mutableStateOf("") }
-    val registrationAvatarState = remember { mutableStateOf("") }
     val requestState = remember { mutableStateOf("") }
     //для аватара
     /*(1)Нам нужно отслеживать возвращенный URI,
@@ -89,27 +86,6 @@ fun RegistrationOrEditScreen(
         }
 
     )
-
-    //Расширение класса Uri для добавления метода toImageFile
-    fun Uri.toImageFile(context: Context): File? {
-        val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = context.contentResolver.query(
-            this,
-            filePathColumn, null, null, null
-        )
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-                val filePath = cursor.getString(columnIndex)
-                cursor.close()
-                return File(filePath)
-            }
-            cursor.close()
-        }
-        return null
-    }
-
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -171,13 +147,13 @@ fun RegistrationOrEditScreen(
                         }
                         //(1)Из Uri в файл
                         val myStream: InputStream? =
-                            conRezolver.openInputStream(imageUri!!)//это не файл
+                            contentResolver.openInputStream(imageUri!!)//это не файл
                         val file: File = createTempFile()
                         myStream.use { input ->
                             file.outputStream().use { output -> input!!.copyTo(output) }
                         }
 
-                        val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
+                        val myFileName = contentResolver.getFileName(imageUri!!)//имя приходит
                         Log.d("File ", "имя файла - $myFileName")
                         //     Log.d("File ", "имя файла - ${myFile. }")
 
@@ -262,9 +238,7 @@ fun RegistrationOrEditScreen(
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                Row(
-
-                ) {
+                Row{
 //------------------Кнопка регистрации--------------------------------------------------------------
                     TextButton(
                         onClick = {
@@ -300,7 +274,7 @@ fun RegistrationOrEditScreen(
             }
 // ---------------Иначе редактирование профиля------------------------------------------------------
         } else {
-            Box() {
+            Box{
                 Row(
                     modifier = Modifier.padding(all = 8.dp),
                     horizontalArrangement = Arrangement.Center
@@ -335,19 +309,4 @@ fun RegistrationOrEditScreen(
             }
         }
     }
-
-
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun prevRegistrationScreen() {
-//    NewsAppTheme {
-//        //val conRez = contentResolver
-//        RegistrationScreen(
-//            navController = rememberNavController(),
-//            viewModel = NewsViewModel(),
-//            conRezolver =
-//        )
-//
-//    }

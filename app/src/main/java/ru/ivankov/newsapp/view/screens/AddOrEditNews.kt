@@ -1,14 +1,10 @@
 package ru.ivankov.newsapp.view.screens
 
-import android.app.Activity
 import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -25,19 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.model.NewsContentTags
-import ru.ivankov.newsapp.view.MainActivity
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.removeSpace
-import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
 import java.io.InputStream
@@ -46,26 +39,36 @@ import java.io.InputStream
 fun AddOrEditNews(
     navController: NavHostController,
     viewModel: NewsViewModel,
-    conRezolver: ContentResolver,
+    contentResolver: ContentResolver,
     isAddNews: Boolean
 ) {
     val context = LocalContext.current
     //состояние полей при создании новости
-    val editTitleState = remember { mutableStateOf("") }
-    val editDescriptionState = remember { mutableStateOf("") }
-    val editTagsOnCreateState = remember { mutableStateOf("") }
-
+    val editTitleState =
+        remember { mutableStateOf(if (isAddNews) "" else viewModel.editableNews.value!!.title) }
+    val editDescriptionState =
+        remember { mutableStateOf(if (isAddNews) "" else viewModel.editableNews.value!!.description) }
     //для диалога добавления тэгов
+    fun getTag(index: Int): String {
+        val myTag: NewsContentTags
+        myTag = viewModel.editableNews.value!!.tags.getOrElse(index){NewsContentTags(1,"")}
+
+        return myTag.title
+    }
+
     val openAddTagsDialog = remember { mutableStateOf(false) }
-    val firstTagState = remember { mutableStateOf("") }
-    val secondTagState = remember { mutableStateOf("") }
-    val thirdTagState = remember { mutableStateOf("") }
-    val fourthTagState = remember { mutableStateOf("") }
+    val firstTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(0))}
+    val secondTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(1))}
+    val thirdTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(2))}
+    val fourthTagState =  remember { mutableStateOf(if (isAddNews) "" else getTag(3))}
     val newsTagsList = remember { mutableStateOf(mutableListOf("")) }
     //Чтобы знать редактируемую новость
-    val editableNewsState = viewModel.editableNews.observeAsState(0)
+    val editableNewsState =
+        viewModel.editableNews.observeAsState(
+         NewsContent("", 1, "", emptyList(), "", "", ""))
     //Реакция на сохранение картинки
     val isPictureSaved = remember { mutableStateOf(false) }
+
 
     //для картиночки
     /*(1)Нам нужно отслеживать возвращенный URI,
@@ -84,24 +87,6 @@ fun AddOrEditNews(
             imageUri = uri
         }
     )
-    //Расширение класса Uri для добавления метода toImageFile
-    fun Uri.toImageFile(context: Context): File? {
-        val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = context.contentResolver.query(
-            this,
-            filePathColumn, null, null, null
-        )
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-                val filePath = cursor.getString(columnIndex)
-                cursor.close()
-                return File(filePath)
-            }
-            cursor.close()
-        }
-        return null
-    }
 //UIStart---------------------------------------------------------------------------------------
     Column(
         modifier = Modifier
@@ -123,7 +108,10 @@ fun AddOrEditNews(
                 // (5) Если есть,то отображаем изображение
                 AsyncImage(
                     model = imageUri,
-                    modifier = Modifier.fillMaxWidth().border(width = 3.dp, color = if (!isPictureSaved.value) Color.White else Color.Green),
+                    modifier = Modifier.fillMaxWidth().border(
+                        width = 3.dp,
+                        color = if (!isPictureSaved.value) Color.White else Color.Green
+                    ),
                     contentDescription = "Selected image",
                 )
 
@@ -143,7 +131,7 @@ fun AddOrEditNews(
                         //и значение этого состояния добавить в запрос на регистрацию
 
                         //функция расширения для получения имени файла
-                       isPictureSaved.value = true
+                        isPictureSaved.value = true
                         fun ContentResolver.getFileName(fileUri: Uri): String {
                             var name = ""
                             val returnCursor = this.query(fileUri, null, null, null, null)
@@ -158,13 +146,13 @@ fun AddOrEditNews(
                         }
                         //(1)Из Uri в файл
                         val myStream: InputStream? =
-                            conRezolver.openInputStream(imageUri!!)//это не файл
+                            contentResolver.openInputStream(imageUri!!)//это не файл
                         val file: File = createTempFile()
                         myStream.use { input ->
                             file.outputStream().use { output -> input!!.copyTo(output) }
                         }
 
-                        val myFileName = conRezolver.getFileName(imageUri!!)//имя приходит
+                        val myFileName = contentResolver.getFileName(imageUri!!)//имя приходит
                         Log.d("File ", "имя файла - $myFileName")
                         //     Log.d("File ", "имя файла - ${myFile. }")
 
@@ -274,17 +262,18 @@ fun AddOrEditNews(
 
                         onClick = {
                             viewModel.updateNews(
-                                newsId = editableNewsState!!.value ,
+                                newsId = editableNewsState.value.id,
                                 image = if (viewModel.guttedPicture.value !== "") "${viewModel.guttedPicture.value}" else "Пустая",
                                 description = editDescriptionState.value,
                                 tags = if (newsTagsList.value[0] !== "") {
-                            newsTagsList.value
-                        } else {
-                            emptyList()
-                        },
+                                    newsTagsList.value
+                                } else {
+                                    emptyList()
+                                },
                                 title = editTitleState.value
                             )
                             //и вернуться назад
+                            navController.navigate(route = AppNavHost.News.route)
                         }
                     ) {
                         Text("Редактировать")
@@ -310,23 +299,23 @@ fun AddOrEditNews(
         AlertDialog(onDismissRequest = { openAddTagsDialog.value = false },
             title = { Text(text = "Найти новость") },
             text = {
-                Column() {
+                Column {
                     TextField(
-                        value = firstTagState.value,
+                        value = firstTagState.value.toString(),
                         onValueChange = { firstTagState.value = removeSpace(it) },
-                        label = { Text("1 tag") })
+                    )
                     TextField(
-                        value = secondTagState.value,
+                        value = secondTagState.value.toString(),
                         onValueChange = { secondTagState.value = removeSpace(it) },
-                        label = { Text("2 tag") })
+                    )
                     TextField(
-                        value = thirdTagState.value,
+                        value = thirdTagState.value.toString(),
                         onValueChange = { thirdTagState.value = removeSpace(it) },
-                        label = { Text("3 tag") })
+                    )
                     TextField(
-                        value = fourthTagState.value,
+                        value = fourthTagState.value.toString(),
                         onValueChange = { fourthTagState.value = removeSpace(it) },
-                        label = { Text("4 tag") })
+                    )
                 }
             },
             buttons = {
@@ -338,11 +327,12 @@ fun AddOrEditNews(
                     TextButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            newsTagsList.value.removeAt(0)
+                            newsTagsList.value.clear()
                             if (firstTagState.value !== "") newsTagsList.value.add(firstTagState.value)
                             if (secondTagState.value !== "") newsTagsList.value.add(secondTagState.value)
                             if (thirdTagState.value !== "") newsTagsList.value.add(thirdTagState.value)
                             if (fourthTagState.value !== "") newsTagsList.value.add(fourthTagState.value)
+                            Log.d("edittag", firstTagState.value)
 
                             openAddTagsDialog.value = false
                         }
@@ -376,7 +366,7 @@ fun AddOrEditNews(
 //        AddNews(
 //            navController = rememberNavController(),
 //            viewModel = NewsViewModel()
-//           // conRezolver = ContentResolver(MainActivity),
+//           // contentResolver = ContentResolver(MainActivity),
 //        )
 //
 //    }
