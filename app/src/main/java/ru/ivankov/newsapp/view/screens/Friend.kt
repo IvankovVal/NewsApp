@@ -38,8 +38,6 @@ fun FriendScreen (
     navController: NavHostController,
     viewModel: NewsViewModel,
 ) {
-    val context = LocalContext.current
-
     val profileState = viewModel.newsAuthor.observeAsState()
 
     val newsState = viewModel.newsList.observeAsState(listOf())
@@ -168,7 +166,6 @@ fun FriendScreen (
             TextButton(onClick = {
                 GlobalScope.launch(Dispatchers.Main) {
                     delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
                     viewModel.getNewsList(1)
                     navController.navigate(route = AppNavHost.News.route) }
             }) {

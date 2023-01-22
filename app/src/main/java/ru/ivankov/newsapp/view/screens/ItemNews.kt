@@ -163,7 +163,6 @@ fun ItemNewsProfile(
     viewModel: NewsViewModel,
     navController: NavHostController
 ) {
-    val context = LocalContext.current
     val isDeleted = remember { mutableStateOf(false) }
 
 // -----------------------------------------------------------------------------------

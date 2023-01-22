@@ -33,7 +33,6 @@ fun LoginScreen(
     navController: NavHostController,
     viewModel: NewsViewModel
 ) {
-    val context = LocalContext.current
     val loginPasswordState = remember { mutableStateOf("") }
     val loginEmailState = remember { mutableStateOf("") }
     val loginMessageState = viewModel.loginMessage.observeAsState()

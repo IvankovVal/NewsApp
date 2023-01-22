@@ -123,7 +123,6 @@ class NewsViewModel : ViewModel() {
 ////в случае, если postLogin() выполнится удачно
 
                     //List<NewsContent>
-                    val answer: List<NewsContent>? = response.body()?.data?.content
                     _newsList.value = response.body()?.data?.content
                     val elementAmount = response.body()?.data?.numberOfElements
                     if (elementAmount != null) {
@@ -339,8 +338,8 @@ class NewsViewModel : ViewModel() {
 
 
             _gettedAvatar.postValue(callUploadImage!!.body()!!.data) // "${callUploadImage!!.body()!!.data}"
-            Log.d("upAva", "${callUploadImage!!.body()!!.data}")
-            Log.d("upAva", "${callUploadImage!!.code()}")
+            Log.d("upAva", callUploadImage.body()!!.data)
+            Log.d("upAva", "${callUploadImage.code()}")
         }
     }
     //-------------Функция добавления картинки в новости-------------------------------------------
@@ -349,8 +348,7 @@ class NewsViewModel : ViewModel() {
             val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
 
             _guttedPicture.postValue(callUploadImage!!.body()!!.data)
-            Log.d("upPic", "${callUploadImage!!.body()!!.data}")
-            Log.d("upPic", "${callUploadImage!!.code()}")
+            Log.d("upPic", "${callUploadImage.code()}")
         }
     }
 

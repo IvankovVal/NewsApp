@@ -47,15 +47,10 @@ fun NewsScreen(
     val pageState = viewModel.pageAmount.observeAsState()
     //состояние диалогов
     val openFindNewsDialog = remember { mutableStateOf(false) }
-    val openCreateNewsDialog = remember { mutableStateOf(false) }
     //состояние полей при поиске
     val editAuthorState = remember { mutableStateOf("") }
     val editWordState = remember { mutableStateOf("") }
     val editTagState = remember { mutableStateOf("") }
-    //состояние полей при создании новости
-    val editTitleState = remember { mutableStateOf("") }
-    val editDescriptionState = remember { mutableStateOf("") }
-    val editTagsOnCreateState = remember { mutableStateOf("") }
 
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
