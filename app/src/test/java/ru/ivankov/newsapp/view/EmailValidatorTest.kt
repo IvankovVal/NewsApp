@@ -6,10 +6,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class EmailValidatorTest() {
+
     @Test
-    fun ValidateEmailTest() {
+    fun CheckEmailTest() {
         assert(!emailValidator("@flwef.ru"))
         assert(!emailValidator("sdff@@3.ru"))
         assert(!emailValidator("@.ru"))
