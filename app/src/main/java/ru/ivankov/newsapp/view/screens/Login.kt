@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import ru.ivankov.newsapp.view.emailValidator
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.passwordValidator
 import ru.ivankov.newsapp.view.ui.theme.BadInput
 import ru.ivankov.newsapp.view.ui.theme.GoodInput
 import ru.ivankov.newsapp.view.ui.theme.NewsAppTheme
@@ -38,11 +39,12 @@ fun LoginScreen(
     val loginMessageState = viewModel.loginMessage.observeAsState()
 
     val isEmailValid = remember { mutableStateOf(false) }
-    val tfColor = if (isEmailValid.value) {
-        GoodInput
-    } else {
-        BadInput
-    }
+    val isPasswordValid = remember { mutableStateOf(false) }
+//    val tfColor = if (isEmailValid.value) {
+//        GoodInput
+//    } else {
+//        BadInput
+//    }
     //authorizationResponse - состояние страницы. При его изменении должна происходить рекомпозиция
     //val enterState = vmNews.profileData?.collectAsState()
 
@@ -65,7 +67,7 @@ fun LoginScreen(
             },
             singleLine = true,//в одну линию
             isError = isEmailValid.value,
-            label = { Text("Enter email") },
+            label = { Text("Введите email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
                 isEmailValid.value =
@@ -74,18 +76,39 @@ fun LoginScreen(
             ),
             textStyle = TextStyle(fontSize = 16.sp),
             colors = TextFieldDefaults.textFieldColors
-                (textColor = Color.Black, backgroundColor = tfColor),
+                (textColor = Color.Black, backgroundColor =
+            if (isEmailValid.value) {
+                GoodInput
+            } else {
+                BadInput
+            }
+            ),
             modifier = Modifier.padding(12.dp)
 
         )
-        //  if (!isEmailValid.value)  {TextFieldColors = }
-        //Toast.makeText(context,"Не корректный email",Toast.LENGTH_SHORT).show()
-
 
         TextField(
             value = loginPasswordState.value,
             onValueChange = { loginPasswordState.value = removeSpace(it) },
-            label = { Text("Enter password") },
+            singleLine = true,//в одну линию
+            isError = isPasswordValid.value,
+            label = { Text("Введите пароль") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
+            keyboardActions = KeyboardActions(onDone = {
+                isPasswordValid.value =
+                    passwordValidator(loginPasswordState.value)
+            }
+            ),
+            textStyle = TextStyle(fontSize = 16.sp),
+
+            colors = TextFieldDefaults.textFieldColors
+                (textColor = Color.Black, backgroundColor =
+            if (isPasswordValid.value) {
+                GoodInput
+            } else {
+                BadInput
+            }
+        ),
             modifier = Modifier.padding(12.dp)
         )
         Row {

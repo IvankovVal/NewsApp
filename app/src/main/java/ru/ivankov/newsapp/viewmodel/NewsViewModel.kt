@@ -258,7 +258,7 @@ class NewsViewModel : ViewModel() {
             override fun onResponse(call: Call<NewsData>, response: Response<NewsData>) {
                 val fundedNews = response.body()!!.content
                 _newsList.value = fundedNews
-                Log.d("search", "${_newsList.value}")
+                Log.d("search", "${response.code()}")
             }
         })
 

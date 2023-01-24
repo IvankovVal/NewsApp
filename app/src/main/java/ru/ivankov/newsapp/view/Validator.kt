@@ -25,16 +25,16 @@ fun emailValidator(email: String): Boolean {
     return isValid
 }
 
-//fun passwordValidator(password: String): Boolean {
-//
-//    var validate = false
-//    if (password.isNotBlank() &&
-//        password.length >= 4
-//        ) {
-//                validate = true
-//    }
-//    return validate
-//}
+fun passwordValidator(password: String): Boolean {
+
+    var validate = false
+    if (password.isNotBlank() &&
+        password.length >= 4
+        ) {
+                validate = true
+    }
+    return validate
+}
 
 fun removeSpace(input: String): String {
     var str = input
