@@ -1,6 +1,7 @@
 package ru.ivankov.newsapp.view
 
 import ru.ivankov.newsapp.model.MyNew
+import ru.ivankov.newsapp.model.UserInfoRequest
 
 
 fun emailValidator(email: String): Boolean {
@@ -32,6 +33,16 @@ fun newsValidator (news: MyNew): Boolean {
     if (
                 news.description.length > 5 &&
                 news.title.length > 3
+    ) isValid = true
+    return isValid
+}
+
+fun userInfoRequestValidator( user: UserInfoRequest): Boolean {
+    var isValid = false
+    if (
+        user.name.length > 5 &&
+        user.email.length > 3 &&
+        user.password.length > 4
     ) isValid = true
     return isValid
 }

@@ -37,7 +37,11 @@ class NewsViewModel : ViewModel() {
     val pageAmount: MutableLiveData<Int?> = _pageAmount
 
     private val _loginMessage = MutableLiveData("")
-    val loginMessage: MutableLiveData<String> = _loginMessage
+    val loginMessage: MutableLiveData<String> = _loginMessage//updateUser
+
+    private val _updateUserMessage = MutableLiveData(0)
+    val updateUserMessage: MutableLiveData<Int> = _updateUserMessage
+
     private val _registrationMessage = MutableLiveData("")
     val registrationMessage: MutableLiveData<String> = _registrationMessage//будем показывать Тост
 
@@ -73,21 +77,21 @@ class NewsViewModel : ViewModel() {
 
     //------------------Методы----------------------------------------------------
     //-------------Регистрация - добавление пользователя-------------------------------------------
-    fun postRegistration(
-        avatar: String,
-        email: String,
-        name: String,
-        password: String,
-        role: String
+    fun postRegistration(user: UserInfoRequest
+//        avatar: String,
+//        email: String,
+//        name: String,
+//        password: String,
+//        role: String
     ){
         viewModelScope.launch(Dispatchers.IO) {
             val callAddUser: Call<AuthorizationResponse>? = ApiService.instance?.api?.addUserRequest(
                 registrationRequest(
-                    avatar,//"https://news-feed.dunice-testing.com/api/v1/file/caa9e2ec-b90b-4b71-b209-2cfe85730c07.jpeg",
-                    email,//"nikadim@mail.ru",
-                    name,//"Nikadim", (нельзя допускать одинаковых имён)
-                    password,//"198727",
-                    role//всегда user
+                    avatar = user.avatar,//"https://news-feed.dunice-testing.com/api/v1/file/caa9e2ec-b90b-4b71-b209-2cfe85730c07.jpeg",
+                    email = user.email,//"nikadim@mail.ru",
+                    name = user.name,//"Nikadim", (нельзя допускать одинаковых имён)
+                    password = user.password,//"198727",
+                    role = user.role//всегда user
                 )
             )
             callAddUser?.enqueue(object : Callback<AuthorizationResponse?> {
@@ -133,33 +137,36 @@ class NewsViewModel : ViewModel() {
 
                 override fun onFailure(call: Call<NewsListResponse>, t: Throwable) {
 
-                    Log.d("page", "ОШИБКА!!!")
+                    Log.d("page", "$t")
                 }
             })
         }
     }
     //--------------Редактирование учётной записи------------------------------------------------------
 
-    fun updateUser(avatar: String, email: String, name: String, token: String) {
+    fun updateUser(user: UserInfoRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             val callUpdateUser: Call<UserInfoResponse>? = ApiService.instance?.api?.editUserRequest(
                 EditUserRequest(
-                    avatar,
-                    email,
-                    name,
-                    "user"
-                ), token
-            )   //updateMyTask(id,name,status)
+                    avatar = user.avatar,
+                    email = user.email,
+                    name = user.name,
+                    role = "role"
+                ), token = profileData.value!!.token
+            )
 
             callUpdateUser?.enqueue(object : Callback<UserInfoResponse?> {
                 override fun onResponse(
                     call: Call<UserInfoResponse?>,
                     response: Response<UserInfoResponse?>
                 ) {
+                     _updateUserMessage.value = response.code().toInt()
+                     Log.d("updateUser", "${response.code()}")
                     //Toast.makeText(this,"Задача обновлена",Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onFailure(call: Call<UserInfoResponse?>, t: Throwable) {
+                    Log.d("updateUser", "$t")
                     // Toast.makeText(context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
                 }
             })
@@ -382,6 +389,7 @@ class NewsViewModel : ViewModel() {
                     Log.d("editNews", "${response.code()}")
                 }
                 override fun onFailure(call: Call<PostNewsResponse>, t: Throwable) {
+                    Log.d("editNews", "$t")
                     // Toast.makeText(context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
                 }
             })

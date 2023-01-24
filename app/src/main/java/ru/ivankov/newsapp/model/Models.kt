@@ -15,6 +15,15 @@ data class MyNew(
     val tags: List<String>,
     val title: String
 )
+
+
+data class UserInfoRequest(
+    val avatar: String,
+    val email: String,
+    val name: String,
+    val password: String,
+    val role: String
+)
 //Модель ответа на загругку картиночки
 data class ImageUploadResponse(
     val success: Boolean,

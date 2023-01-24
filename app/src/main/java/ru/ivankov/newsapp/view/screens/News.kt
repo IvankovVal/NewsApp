@@ -51,6 +51,8 @@ fun NewsScreen(
     val editAuthorState = remember { mutableStateOf("") }
     val editWordState = remember { mutableStateOf("") }
     val editTagState = remember { mutableStateOf("") }
+    val tagsToList = remember { mutableStateOf(mutableListOf("")) }
+    tagsToList.value = listOf(*editTagState.value.split(",").toTypedArray()) as MutableList<String>
 
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
@@ -79,7 +81,10 @@ fun NewsScreen(
 
 
 // Карточка для  отображения новостей---------------------------------------------------------------
-        Box( modifier = Modifier.background(Color.White).fillMaxWidth().weight(8.5f)) {
+        Box( modifier = Modifier
+            .background(Color.White)
+            .fillMaxWidth()
+            .weight(8.5f)) {
 // ----------------------Список новостей-----------------------------
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -176,15 +181,18 @@ fun NewsScreen(
                                 TextField(
                                     value = editAuthorState.value,
                                     onValueChange = { editAuthorState.value = removeSpace(it) },
+                                    singleLine = true,
                                     label = { Text("Автор") })
                                 TextField(
                                     value = editWordState.value,
                                     onValueChange = { editWordState.value = removeSpace(it) },
+                                    singleLine = true,
                                     label = { Text("Ключевые слова") })
                                 TextField(
                                     value = editTagState.value,
                                     onValueChange = { editTagState.value = removeSpace(it) },
-                                    label = { Text("tags") })
+                                    singleLine = true,
+                                    label = { Text("Тэги через запятую") })
                             }
                         },
                         buttons = {
@@ -192,7 +200,7 @@ fun NewsScreen(
                                 modifier = Modifier.padding(all = 8.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
-//Кнопка редактирования в диалоге-------------------------------------------------------------------------
+//Кнопка редактирования в диалоге-------------------------------------------------------------------
                                 TextButton(
                                     modifier = Modifier.weight(1f),
                                     onClick = {
@@ -201,7 +209,7 @@ fun NewsScreen(
                                             15,
                                             editAuthorState.value,
                                             editWordState.value,
-                                            emptyList()
+                                            tagsToList.value//Что-то решаем с тэгами
                                         )
                                         navController.navigate(route = AppNavHost.News.route)
                                         openFindNewsDialog.value = false
@@ -209,7 +217,7 @@ fun NewsScreen(
                                 ) {
                                     Text("Искать")
                                 }
-//Кнопка отмены редактирования в диалоге------------------------------------------------------------------
+//Кнопка отмены редактирования в диалоге------------------------------------------------------------
                                 TextButton(
                                     modifier = Modifier.weight(1f),
                                     onClick = {

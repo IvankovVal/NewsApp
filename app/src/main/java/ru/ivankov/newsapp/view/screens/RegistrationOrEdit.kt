@@ -36,11 +36,13 @@ import coil.compose.AsyncImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.ivankov.newsapp.model.UserInfoRequest
 import ru.ivankov.newsapp.view.emailValidator
 import ru.ivankov.newsapp.view.navigation.AppNavHost
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.ui.theme.BadInput
 import ru.ivankov.newsapp.view.ui.theme.GoodInput
+import ru.ivankov.newsapp.view.userInfoRequestValidator
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
 import java.io.InputStream
@@ -55,9 +57,10 @@ fun RegistrationOrEditScreen(
 
     val context = LocalContext.current
     val profileState = viewModel.profileData.observeAsState()
-    val messageState = viewModel.registrationMessage.observeAsState()
-    val registrationNameState = remember { mutableStateOf("") }
-    val registrationEmailState = remember { mutableStateOf("") }
+    val regMessageState = viewModel.registrationMessage.observeAsState()
+    val editMessageState = viewModel.updateUserMessage.observeAsState()
+    val registrationNameState = remember { mutableStateOf (if (isRegistration) "" else viewModel.profileData.value!!.name) }
+    val registrationEmailState = remember { mutableStateOf (if (isRegistration) "" else viewModel.profileData.value!!.email) }
     val isEmailValid = remember { mutableStateOf(false) }
     val tfColor = if (isEmailValid.value) {
         GoodInput
@@ -84,8 +87,10 @@ fun RegistrationOrEditScreen(
             hasImage = uri != null
             imageUri = uri
         }
-
     )
+    val avatarState = remember { mutableStateOf(if (isRegistration)imageUri else viewModel.profileData.value?.avatar) }
+
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -109,8 +114,8 @@ fun RegistrationOrEditScreen(
                 AsyncImage(
                     model = imageUri,
                     modifier = Modifier.fillMaxWidth(),
-                    contentDescription = "Selected image",
-                )
+                    contentDescription = "Selected image", )
+
             }
             Row(
                 modifier = Modifier
@@ -128,50 +133,50 @@ fun RegistrationOrEditScreen(
 // --------------------Кнопка сохранить аватар
                 TextButton(
                     onClick = {
-                        // (6) тут нужно запустить запрос на добавление этого файла на сервер
-                        //ответ сервера добавить в состояние аватара (registrationAvatarState)
-                        //и значение этого состояния добавить в запрос на регистрацию
+                              if (imageUri !== null ){
 
-                        //функция расширения для получения имени файла
-                        fun ContentResolver.getFileName(fileUri: Uri): String {
-                            var name = ""
-                            val returnCursor = this.query(fileUri, null, null, null, null)
-                            if (returnCursor != null) {
-                                val nameIndex =
-                                    returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                                returnCursor.moveToFirst()
-                                name = returnCursor.getString(nameIndex)
-                                returnCursor.close()
-                            }
-                            return name
-                        }
-                        //(1)Из Uri в файл
-                        val myStream: InputStream? =
-                            contentResolver.openInputStream(imageUri!!)//это не файл
-                        val file: File = createTempFile()
-                        myStream.use { input ->
-                            file.outputStream().use { output -> input!!.copyTo(output) }
-                        }
-
-                        val myFileName = contentResolver.getFileName(imageUri!!)//имя приходит
-                        Log.d("File ", "имя файла - $myFileName")
-                        //     Log.d("File ", "имя файла - ${myFile. }")
-
-                        //(2)Создать отправляемый файл
-                        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-                        //(2)Сформировать мультипарт
-                        val filePart = MultipartBody.Part.createFormData(
-                            "file",
-                            " $myFileName",
-                            requestBody
-                        )
-
+                                      //функция расширения для получения имени файла
+                                      fun ContentResolver.getFileName(fileUri: Uri): String {
+                                          var name = ""
+                                          val returnCursor = this.query(fileUri, null, null, null, null)
+                                          if (returnCursor != null) {
+                                              val nameIndex =
+                                                  returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                              returnCursor.moveToFirst()
+                                              name = returnCursor.getString(nameIndex)
+                                              returnCursor.close()
+                                          }
+                                          return name
+                                      }
+                                      //(1)Из Uri в файл
+                                      val myStream: InputStream? =
+                                          contentResolver.openInputStream(imageUri!!)//это не файл
+                                      val file: File = createTempFile()
+                                      myStream.use { input ->
+                                          file.outputStream().use { output -> input!!.copyTo(output) }
+                                      }
+//-------------------
+                                      val myFileName = contentResolver.getFileName(imageUri!!)//имя приходит
+                                      Log.d("File ", "имя файла - $myFileName")
+                                      //     Log.d("File ", "имя файла - ${myFile. }")
+                                      //(2)Создать отправляемый файл
+                                      val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                                      //(2)Сформировать мультипарт
+                                      val filePart = MultipartBody.Part.createFormData(
+                                          "file",
+                                          " $myFileName",
+                                          requestBody
+                                      )
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
-                        //  suspend {
-                        viewModel.uploadAvatar(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
-                        //  delay(1000)
-                        // }
-                        Log.d("ava", "в аватаре - ${viewModel.gettedAvatar.value}")
+                                      //  suspend {
+                                      viewModel.uploadAvatar(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
+                                      //  delay(1000)
+                                      // }
+                                      Log.d("ava", "в аватаре - ${viewModel.gettedAvatar.value}")
+                                  }
+                                  else   Toast.makeText(context,"Не выбрано",Toast.LENGTH_SHORT).show()
+
+
 
                     },
                 ) {
@@ -242,17 +247,22 @@ fun RegistrationOrEditScreen(
 //------------------Кнопка регистрации--------------------------------------------------------------
                     TextButton(
                         onClick = {
-                            viewModel.postRegistration(
+                            val user = UserInfoRequest(
                                 avatar = "${viewModel.gettedAvatar.value}",
-                                registrationEmailState.value,
-                                registrationNameState.value,
-                                registrationPasswordState.value,
+                                email = registrationEmailState.value,
+                                name = registrationNameState.value,
+                                password = registrationPasswordState.value,
                                 role = "user"
                             )
+                            if (userInfoRequestValidator(user)){
+                            viewModel.postRegistration(user
+
+                            )}
                             Log.d("inReg", "Значение -  ${viewModel.gettedAvatar.value}")
                             requestState.value =
                                 "${registrationEmailState}/${registrationNameState}/${registrationPasswordState}"
-                            if (messageState.value == "") {
+
+                            if (regMessageState.value == "") {
                                 Toast.makeText(context, "Успешно", Toast.LENGTH_LONG).show()
                                 navController.navigate(route = AppNavHost.Login.route)
                             }
@@ -285,16 +295,32 @@ fun RegistrationOrEditScreen(
                             .padding(vertical = 12.dp)
                             .weight(1f),
                         onClick = {
-                            viewModel.updateUser(
+                            val user = UserInfoRequest(
                                 avatar = "${viewModel.gettedAvatar.value}",
-                                registrationEmailState.value,
-                                registrationNameState.value,
-                                "${profileState.value?.token}"
+                                email = registrationEmailState.value,
+                                name = registrationNameState.value,
+                                password = registrationPasswordState.value,
+                                role = "user"
                             )
-                            //Выйти из профиля
-                            viewModel._profileData.value = null
-                            viewModel.getNewsList(1)
-                            navController.navigate(route = AppNavHost.News.route)
+                            if (userInfoRequestValidator(user)) {
+                                viewModel.updateUser(user)
+                                    viewModel.getNewsList(1)
+                                    viewModel.updateUserMessage.value = 0
+                                    navController.navigate(route = AppNavHost.News.route)
+                                viewModel._profileData.value = null
+
+                            }
+                            else Toast.makeText(context,"Чего-то  не хватает",Toast.LENGTH_LONG).show()
+
+//                                if (editMessageState.value == 200)
+//                                {viewModel._profileData.value = null
+//                                viewModel.getNewsList(1)
+//                                viewModel.updateUserMessage.value = 0
+//                                navController.navigate(route = AppNavHost.News.route)}
+//
+//                             else Toast.makeText(context,"Чего-то  не хватает",Toast.LENGTH_LONG).show()
+
+
                         }
                     ) { Text("Редактировать") }
 //Кнопка отмены редактирования ------------------------------------------------------------------
@@ -310,3 +336,7 @@ fun RegistrationOrEditScreen(
         }
     }
 }
+//Выйти из профиля
+//viewModel._profileData.value = null
+//viewModel.getNewsList(1)
+//navController.navigate(route = AppNavHost.News.route)

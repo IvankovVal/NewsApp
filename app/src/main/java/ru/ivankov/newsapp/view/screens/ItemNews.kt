@@ -221,7 +221,7 @@ fun ItemNewsProfile(
                     )
                 }
             }
-            if (item.username == viewModel.profileData.value!!.name) {
+            if (item.username == viewModel.profileData.value?.name) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
