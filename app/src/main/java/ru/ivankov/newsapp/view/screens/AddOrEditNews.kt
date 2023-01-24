@@ -27,9 +27,11 @@ import coil.compose.AsyncImage
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.ivankov.newsapp.model.MyNew
 import ru.ivankov.newsapp.model.NewsContent
 import ru.ivankov.newsapp.model.NewsContentTags
 import ru.ivankov.newsapp.view.navigation.AppNavHost
+import ru.ivankov.newsapp.view.newsValidator
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.viewmodel.NewsViewModel
 import java.io.File
@@ -52,23 +54,22 @@ fun AddOrEditNews(
     fun getTag(index: Int): String {
         val myTag: NewsContentTags
         myTag = viewModel.editableNews.value!!.tags.getOrElse(index){NewsContentTags(1,"")}
-
         return myTag.title
     }
-
     val openAddTagsDialog = remember { mutableStateOf(false) }
     val firstTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(0))}
     val secondTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(1))}
     val thirdTagState = remember { mutableStateOf(if (isAddNews) "" else getTag(2))}
     val fourthTagState =  remember { mutableStateOf(if (isAddNews) "" else getTag(3))}
     val newsTagsList = remember { mutableStateOf(mutableListOf("")) }
+    val isNewValid = remember { mutableStateOf(false) }
+
     //Чтобы знать редактируемую новость
     val editableNewsState =
         viewModel.editableNews.observeAsState(
          NewsContent("", 1, "", emptyList(), "", "", ""))
     //Реакция на сохранение картинки
     val isPictureSaved = remember { mutableStateOf(false) }
-
 
     //для картиночки
     /*(1)Нам нужно отслеживать возвращенный URI,
@@ -189,8 +190,8 @@ fun AddOrEditNews(
                     modifier = Modifier.padding(12.dp),
                     value = editTitleState.value,
                     onValueChange = { editTitleState.value = it },
+                    singleLine = true,
                     label = { Text("Название") })
-
 
                 TextField(
                     modifier = Modifier.padding(12.dp),
@@ -225,9 +226,9 @@ fun AddOrEditNews(
                         modifier = Modifier
                             .weight(1f)
                             .padding(12.dp),
-
                         onClick = {
-                            viewModel.insertNews(
+                            //создалиновость
+                            val news = MyNew(
                                 description = editDescriptionState.value,
                                 image = if (viewModel.guttedPicture.value !== "") "${viewModel.guttedPicture.value}" else "Пустая",
                                 tags = if (newsTagsList.value[0] !== "") {
@@ -237,8 +238,15 @@ fun AddOrEditNews(
                                 },
                                 title = editTitleState.value
                             )
-                            viewModel.getNewsList(1)
-                            navController.navigate(route = AppNavHost.News.route)
+                            //проверили новость
+                            isNewValid.value = newsValidator (news)
+                            //отправили новость
+                            if (isNewValid.value){
+                                viewModel.insertNews(news)
+                                viewModel.getNewsList(1)
+                                navController.navigate(route = AppNavHost.News.route)
+                            }
+                            else Toast.makeText( context,"ЧЕГО-ТО НЕ ХВАТАЕТ",Toast.LENGTH_LONG).show()
                         }
                     ) {
                         Text("Создать")
@@ -358,16 +366,3 @@ fun AddOrEditNews(
     }
 }
 
-//____________________________________________________________________________________________________
-//@Preview(showBackground = true)
-//@Composable
-//fun PrevAddNews() {
-//    NewsAppTheme {
-//        AddNews(
-//            navController = rememberNavController(),
-//            viewModel = NewsViewModel()
-//           // contentResolver = ContentResolver(MainActivity),
-//        )
-//
-//    }
-//}

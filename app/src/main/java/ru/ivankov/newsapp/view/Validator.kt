@@ -1,5 +1,7 @@
 package ru.ivankov.newsapp.view
 
+import ru.ivankov.newsapp.model.MyNew
+
 
 fun emailValidator(email: String): Boolean {
     val emailEndsList =
@@ -22,6 +24,15 @@ fun emailValidator(email: String): Boolean {
                 isValid = true
         }
     }
+    return isValid
+}
+
+fun newsValidator (news: MyNew): Boolean {
+    var isValid = false
+    if (
+                news.description.length > 5 &&
+                news.title.length > 3
+    ) isValid = true
     return isValid
 }
 

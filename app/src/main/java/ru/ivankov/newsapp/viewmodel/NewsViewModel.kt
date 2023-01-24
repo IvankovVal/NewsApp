@@ -266,18 +266,19 @@ class NewsViewModel : ViewModel() {
 
     //-------------Функция добавления задачи-------------------------------------------
     fun insertNews(
-        description: String,
-        image: String,
-        tags: List<String>,
-        title: String
+        new: MyNew
+//        description: String,
+//        image: String,
+//        tags: List<String>,
+//        title: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             val callPostNews: Call<PostNewsResponse>? = ApiService.instance?.api?.postNews(
                 PostNewsBody(
-                    description,
-                    image,
-                    tags,
-                    title
+                    description = new.description,
+                    image = new.image,
+                    tags = new.tags,
+                    title = new.title
                 ),
                 profileData.value!!.token
             )
@@ -315,19 +316,12 @@ class NewsViewModel : ViewModel() {
                     name = response.body()?.data!!.name,
                     role = response.body()?.data!!.role,
                 )
-
                 Log.d("user", "${response.code()}")
-
-
             }
-
-
             override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
                 Log.d("userF", "$t")
-
             }
         })
-
     }
 
     //-------------Функция добавления аватара-------------------------------------------
@@ -335,7 +329,6 @@ class NewsViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 //            val callPostNews: Call<PostNewsResponse>? = ApiService.instance?.api?.postNews(
             val callUploadImage  = ApiService.instance?.api?.uploadImage(picture)
-
 
             _gettedAvatar.postValue(callUploadImage!!.body()!!.data) // "${callUploadImage!!.body()!!.data}"
             Log.d("upAva", callUploadImage.body()!!.data)
@@ -351,7 +344,6 @@ class NewsViewModel : ViewModel() {
             Log.d("upPic", "${callUploadImage.code()}")
         }
     }
-
     fun deleteNews(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val callDeleteTask: Call<PostNewsResponse>? =

@@ -8,14 +8,19 @@ import retrofit2.http.Path
 /*
 * Классы для создания объектов которыми будут реализовываться запросы и ответы
 * */
+//Модель для создания новости
+data class MyNew(
+    val description: String,
+    val image: String,
+    val tags: List<String>,
+    val title: String
+)
 //Модель ответа на загругку картиночки
 data class ImageUploadResponse(
     val success: Boolean,
     val statusCode: Int,
     val data: String
 )
-
-
 // Модель запроса на аутентификацию
 data class LoginRequest (
     val email: String,

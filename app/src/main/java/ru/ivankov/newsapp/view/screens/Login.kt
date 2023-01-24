@@ -43,7 +43,7 @@ fun LoginScreen(
 
     val isEmailValid = remember { mutableStateOf(false) }
     val isPasswordValid = remember { mutableStateOf(false) }
-    var passwordVisibility = remember { mutableStateOf(false) }
+    val passwordVisibility = remember { mutableStateOf(false) }
     val passwordIcon = if (passwordVisibility.value) painterResource(id = R.drawable.ic_visibility_off)
     else painterResource(id = R.drawable.ic_visibility)
 
@@ -88,7 +88,7 @@ fun loginProfile (){
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
                 isEmailValid.value = emailValidator(loginEmailState.value)
-                if (isEmailValid.value==true && isPasswordValid.value==true) loginProfile ()
+                if (isEmailValid.value==true && isPasswordValid.value==true){loginProfile ()}
             }
             ),
             textStyle = TextStyle(fontSize = 16.sp),
@@ -110,10 +110,10 @@ fun loginProfile (){
             singleLine = true,//в одну линию
             isError = isPasswordValid.value,
             label = { Text("Введите пароль") },
-            trailingIcon = { IconButton(onClick = {passwordVisibility.value = !passwordVisibility.value })
+            trailingIcon = { IconButton(onClick = {passwordVisibility.value = ! passwordVisibility.value})
             {Icon(painter = passwordIcon, contentDescription = "видимость пароля")}},
             visualTransformation = if (passwordVisibility.value == true) VisualTransformation.None
-            else PasswordVisualTransformation(),
+            else {PasswordVisualTransformation()},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
                 isPasswordValid.value = passwordValidator(loginPasswordState.value)
@@ -174,7 +174,7 @@ fun loginProfile (){
 //____________________________________________________________________________________________________
 @Preview(showBackground = true)
 @Composable
-fun prevLoginScreen() {
+fun PrevLoginScreen() {
     NewsAppTheme {
         LoginScreen(
             navController = rememberNavController(),
