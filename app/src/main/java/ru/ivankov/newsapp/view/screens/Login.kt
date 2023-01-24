@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.*
+import ru.ivankov.newsapp.R
 import ru.ivankov.newsapp.view.emailValidator
 import ru.ivankov.newsapp.view.removeSpace
 import ru.ivankov.newsapp.view.navigation.AppNavHost
@@ -40,11 +41,10 @@ fun LoginScreen(
 
     val isEmailValid = remember { mutableStateOf(false) }
     val isPasswordValid = remember { mutableStateOf(false) }
-//    val tfColor = if (isEmailValid.value) {
-//        GoodInput
-//    } else {
-//        BadInput
-//    }
+    var passwordVisibility = remember { mutableStateOf(false) }
+    val passwordIcon = if (passwordVisibility.value) painterResource(id = R.drawable.ic_visibility)
+    else painterResource(id = R.drawable.ic_visibility_off)
+
     //authorizationResponse - состояние страницы. При его изменении должна происходить рекомпозиция
     //val enterState = vmNews.profileData?.collectAsState()
 
@@ -93,12 +93,14 @@ fun LoginScreen(
             singleLine = true,//в одну линию
             isError = isPasswordValid.value,
             label = { Text("Введите пароль") },
+            trailingIcon = { IconButton(onClick = {passwordVisibility.value = !passwordVisibility.value })
+            {
+                Icon(painter = passwordIcon, contentDescription = "видимость пароля")
+
+            }},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
-                isPasswordValid.value =
-                    passwordValidator(loginPasswordState.value)
-            }
-            ),
+                isPasswordValid.value = passwordValidator(loginPasswordState.value) } ),
             textStyle = TextStyle(fontSize = 16.sp),
 
             colors = TextFieldDefaults.textFieldColors
