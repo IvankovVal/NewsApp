@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,12 +44,27 @@ fun LoginScreen(
     val isEmailValid = remember { mutableStateOf(false) }
     val isPasswordValid = remember { mutableStateOf(false) }
     var passwordVisibility = remember { mutableStateOf(false) }
-    val passwordIcon = if (passwordVisibility.value) painterResource(id = R.drawable.ic_visibility)
-    else painterResource(id = R.drawable.ic_visibility_off)
+    val passwordIcon = if (passwordVisibility.value) painterResource(id = R.drawable.ic_visibility_off)
+    else painterResource(id = R.drawable.ic_visibility)
 
-    //authorizationResponse - состояние страницы. При его изменении должна происходить рекомпозиция
-    //val enterState = vmNews.profileData?.collectAsState()
-
+fun loginProfile (){
+    // синхронизировать без секундочки
+    viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value) {}
+    GlobalScope.launch(Dispatchers.Main) {
+        delay(1000)
+        // одно из решений использовать LaunchEffect на странице news
+        viewModel.searchNews(
+            1,
+            15,
+            "${viewModel.profileData.value?.name}",//"${viewModel.profileData.value?.name}",//дать автора
+            "",
+            listOf()
+        )
+        if (viewModel.loginMessage.value == "") {
+            navController.navigate(route = AppNavHost.MyProfile.route)
+        }
+    }
+}
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -70,8 +87,8 @@ fun LoginScreen(
             label = { Text("Введите email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
-                isEmailValid.value =
-                    emailValidator(loginEmailState.value)
+                isEmailValid.value = emailValidator(loginEmailState.value)
+                if (isEmailValid.value==true && isPasswordValid.value==true) loginProfile ()
             }
             ),
             textStyle = TextStyle(fontSize = 16.sp),
@@ -94,13 +111,14 @@ fun LoginScreen(
             isError = isPasswordValid.value,
             label = { Text("Введите пароль") },
             trailingIcon = { IconButton(onClick = {passwordVisibility.value = !passwordVisibility.value })
-            {
-                Icon(painter = passwordIcon, contentDescription = "видимость пароля")
-
-            }},
+            {Icon(painter = passwordIcon, contentDescription = "видимость пароля")}},
+            visualTransformation = if (passwordVisibility.value == true) VisualTransformation.None
+            else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),//тип клавиатуры для email
             keyboardActions = KeyboardActions(onDone = {
-                isPasswordValid.value = passwordValidator(loginPasswordState.value) } ),
+                isPasswordValid.value = passwordValidator(loginPasswordState.value)
+                if (isEmailValid.value==true && isPasswordValid.value==true) loginProfile ()
+            } ),
             textStyle = TextStyle(fontSize = 16.sp),
 
             colors = TextFieldDefaults.textFieldColors
@@ -117,25 +135,7 @@ fun LoginScreen(
             //Кнопка входа
             TextButton(
                 onClick = {
-                    // синхронизировать без секундочки
-                    viewModel.postAuthentification(loginEmailState.value, loginPasswordState.value) {}
-                    GlobalScope.launch(Dispatchers.Main) {
-                        delay(1000)
-//                        Log.d(ContentValues.TAG,"Значение профиля - ${viewModel.profileData.value?.name}")
-                        // одно из решений использовать LaunchEffect на странице news
-                        viewModel.searchNews(
-                            1,
-                            15,
-                            "${viewModel.profileData.value?.name}",//"${viewModel.profileData.value?.name}",//дать автора
-                            "",
-                            listOf()
-
-                        )
-                        if (viewModel.loginMessage.value == "") {
-                            navController.navigate(route = AppNavHost.MyProfile.route)
-                        }
-                    }
-
+                    loginProfile ()
                 },
                 modifier = Modifier
                     .weight(1f)
