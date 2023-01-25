@@ -35,6 +35,5 @@ fun AppNavHost(mViewModel: NewsViewModel, navController: NavHostController, conR
         composable(AppNavHost.EditScreen.route){ RegistrationOrEditScreen(navController = navController,viewModel = mViewModel, contentResolver = conRez,isRegistration = false) }//Для редактирования
         composable(AppNavHost.AddNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, contentResolver = conRez, isAddNews = true) }//Для добавления новости
         composable(AppNavHost.EditNewsScreen.route){ AddOrEditNews(navController = navController,viewModel = mViewModel, contentResolver = conRez, isAddNews = false) }//Для редактирования новости
-
     }
 }

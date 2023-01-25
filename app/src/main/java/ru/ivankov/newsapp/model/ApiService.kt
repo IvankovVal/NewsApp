@@ -4,10 +4,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /*
-* Мы создадим модифицированный интерфейс, чтобы добавить конечные точки URL-адреса (кавычки в нашем случае — это конечная точка).
+* Мы создадим модифицированный интерфейс, чтобы добавить конечные точки URL-адреса
+*  (кавычки в нашем случае — это конечная точка).
 * */
-
-
 //(1) class ApiClient. Само подключение благодаря, которому происходит отправка запросов.
 class ApiService private constructor() {
     val api: ApiInterface

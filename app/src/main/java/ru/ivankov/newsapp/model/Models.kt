@@ -15,8 +15,6 @@ data class MyNew(
     val tags: List<String>,
     val title: String
 )
-
-
 data class UserInfoRequest(
     val avatar: String,
     val email: String,
@@ -131,41 +129,3 @@ data class PostNewsBody(
     val tags: List<String>,
     val title: String
 )
-
-
-
-
-
-////------------------Модели для запроса всех новостей----------------------------------------------------
-
-
-////------------------Модель POST запроса публикации новости------------------------------------------
-//data class PostNewsBody(
-//    val description: String,
-//    val image: String,
-//    val tags: List<String>,
-//    val title: String
-//)
-////------------------Модель ответа на запрос о публикации новости------------------------------------
-//data class PostNewsResponse(
-//    val success: Boolean,
-//    val statusCode: Int,
-//    val codes: List<Int>,
-//    val timeStamp: String
-//)
-//
-////------------------Модель запроса на загрузку картинки---------------------------------------------
-//data class ImageUploadModel(
-//    val success: Boolean,
-//    val statusCode: Int,
-//    val data: String
-//)
-////------------------Модель GET запроса на получение информации о пользователе по ID-----------------
-//data class UserInfoResponse(
-//    val data: UserInfoDataResponse,
-//    val statusCode: Int,
-//    val success: Boolean
-//)
-//
-
-

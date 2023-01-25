@@ -55,7 +55,6 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(10.dp)) {
 //-------------  Аватар----------------------------------------------------------------------------
-
                 AsyncImage(
                     model = profileState.value?.avatar,
                     contentDescription = "Аватар",
@@ -155,7 +154,6 @@ fun ProfileScreen(
                                     Text("Отмена")
                                 }
                             }
-
                         }
                     )
 //-----------------------Конец Alert Dialog---------------------------------------------------------
@@ -171,7 +169,6 @@ fun ProfileScreen(
                 }
                 if (openDeleteUserDialog.value) {
                     //Вызываем диалог
-
                 }
 //Кнопка выхода из учётной записи-------------------------------------------------------------------------
                 TextButton(
@@ -183,7 +180,6 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f)
                 )
                 { Text(text = "ВЫХОД") }
-
             }
         }
         // -------------------------Строка страниц_______________________________________________
@@ -208,7 +204,6 @@ fun ProfileScreen(
                                 "${viewModel.profileData.value?.name}",
                                 "",
                                 emptyList()
-
                             )
                         }
                         .padding(8.dp)
@@ -266,6 +261,3 @@ fun ProfileScreen(
             )
         }
     }
-
-
-

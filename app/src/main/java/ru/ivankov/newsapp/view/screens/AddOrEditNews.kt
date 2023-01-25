@@ -115,8 +115,6 @@ fun AddOrEditNews(
                     ),
                     contentDescription = "Selected image",
                 )
-
-
             }
             Row(
                 modifier = Modifier
@@ -165,11 +163,9 @@ fun AddOrEditNews(
                             " $myFileName",
                             requestBody
                         )
-
 //(3)Передать мультипарт методу запроса на загрузку файла и запустить его
                         viewModel.uploadPicture(filePart)//передаём полученный объект для отправки на сервер в соответствующий метод
                         Log.d("pic", "выбор картинки - ${viewModel.guttedPicture.value}")
-
                     },
                 ) {
                     Text(text = "Сохранить")
@@ -209,7 +205,6 @@ fun AddOrEditNews(
                     Text("Добавить тэги")
                 }
             }
-
         }
         //Box3
         Box(
@@ -359,7 +354,6 @@ fun AddOrEditNews(
                         Text("Отмена")
                     }
                 }
-
             }
         )
 //-----------------------Конец Alert Dialog---------------------------------------------------------

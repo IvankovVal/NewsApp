@@ -39,10 +39,8 @@ fun FriendScreen (
     viewModel: NewsViewModel,
 ) {
     val profileState = viewModel.newsAuthor.observeAsState()
-
     val newsState = viewModel.newsList.observeAsState(listOf())
     val pageState = viewModel.newsList.value!!.size/15   //pageAmount.observeAsState()
-
 //-------------------------------------------------------------
     Column()
     {
@@ -59,7 +57,6 @@ fun FriendScreen (
                 modifier = Modifier.padding(10.dp)
             ) {
 //-------------  Аватар----------------------------------------------------------------------------
-
                 AsyncImage(
                     model = profileState.value?.avatar,
                     contentDescription = "Аватар",
@@ -103,10 +100,7 @@ fun FriendScreen (
                 }
             }
         }
-
         // -------------------------Строка страниц_______________________________________________
-
-
         LazyRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier

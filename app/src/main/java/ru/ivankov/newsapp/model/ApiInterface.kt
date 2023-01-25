@@ -91,27 +91,3 @@ interface ApiInterface {
         @Header("Authorization") token: String
     ): Call<UserInfoResponse>
 }
-
-//interface MyApi{
-//
-//
-//    //Загрузить картиночку на сервер
-//    @Multipart
-//    @POST("/api/v1/file/uploadFile")
-//    suspend fun uploadImage(
-//        @Part file: MultipartBody.Part?
-//    ): Response<ImageUploadResponse>
-//
-//
-//    companion object{
-//        operator fun invoke() :MyApi{
-//
-//            return Retrofit.Builder()
-//                .baseUrl("https://news-feed.dunice-testing.com")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build()
-//                .create(MyApi::class.java)
-//        }
-//
-//    }
-//}

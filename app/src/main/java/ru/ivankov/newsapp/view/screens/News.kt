@@ -57,15 +57,12 @@ fun NewsScreen(
     //Расположим карточки с помощью ConstrainLayout
     Column(modifier = Modifier.fillMaxSize()) {//основная колонка содержащая все элементы
         // -------------------------Строкав страниц_______________________________________________
-
-
         LazyRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 5.dp, end = 5.dp)
                 .fillMaxWidth()
-
         ) {
             items(count = pageState.value!!.toInt())
             {
@@ -78,8 +75,6 @@ fun NewsScreen(
                 )
             }
         }
-
-
 // Карточка для  отображения новостей---------------------------------------------------------------
         Box( modifier = Modifier
             .background(Color.White)
@@ -101,7 +96,6 @@ fun NewsScreen(
         }
 // -------------------------Карточка со строкой кнопок_______________________________________________
         Card(
-
             shape = RoundedCornerShape(15.dp),
             elevation = 5.dp,
             modifier = Modifier
@@ -109,11 +103,9 @@ fun NewsScreen(
                 .padding(start = 5.dp, end = 5.dp)
                 .border(2.dp, Color.Black, shape = RoundedCornerShape(20.dp))
                 .fillMaxWidth()
-
         ) {
 //----------------------Строка с кнопками--------------------------------------------------
             Row {
-
 //----------------------------Кнопка профиль-------------------------------------------
                 IconButton(
                     //добавить выбор при условии если token не null переходить сразу в профиль

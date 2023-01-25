@@ -65,7 +65,6 @@ fun loginProfile (){
         }
     }
 }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,7 +73,6 @@ fun loginProfile (){
         Text(
             text = "${loginMessageState.value}",
             modifier = Modifier.padding(12.dp)
-
         )
         TextField(
             value = loginEmailState.value,
@@ -101,9 +99,7 @@ fun loginProfile (){
             }
             ),
             modifier = Modifier.padding(12.dp)
-
         )
-
         TextField(
             value = loginPasswordState.value,
             onValueChange = { loginPasswordState.value = removeSpace(it) },
@@ -143,7 +139,6 @@ fun loginProfile (){
 
             ) { Text(text = "ВХОД") }
 
-
 //Кнопка регистрации
             TextButton(
                 onClick = { navController.navigate(route = AppNavHost.RegistrationScreen.route) },
@@ -164,13 +159,9 @@ fun loginProfile (){
                     .padding(vertical = 12.dp)
 
             ) { Text(text = "НАЗАД") }
-
         }
     }
-
-
 }
-
 //____________________________________________________________________________________________________
 @Preview(showBackground = true)
 @Composable
@@ -180,6 +171,5 @@ fun PrevLoginScreen() {
             navController = rememberNavController(),
             viewModel = NewsViewModel()
         )
-
     }
 }

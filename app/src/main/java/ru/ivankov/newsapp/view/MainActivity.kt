@@ -36,47 +36,10 @@ class MainActivity : ComponentActivity() {
                                 bottom.linkTo(parent.bottom)
                             }
                             .fillMaxSize(),
-
                         ) {
-
                         AppNavHost(vmNews, navController,contentResolver)
                     }
                 }
             }
         }
     }}
-
-//    @Composable
-//    fun NewsApp() {
-//        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-//            val (mainCard) = createRefs()
-//            Card(
-//                modifier = Modifier
-//                    .constrainAs(mainCard) {
-//                        start.linkTo(parent.start)
-//                        end.linkTo(parent.end)
-//                        top.linkTo(parent.top)
-//                        bottom.linkTo(parent.bottom)
-//                    }
-//                    .fillMaxSize(),
-//
-//                ) {
-//                AppNavHost(vmNews, navController)
-//            }
-//        }
-//    }
-
-
-//    @Preview(showBackground = true)
-//    @Composable
-//    fun prevNewsApp() {
-//        NewsAppTheme {
-//            NewsApp()
-//
-//        }
-//    }
-
-//fun CloseApp() {
-//    LocalContext.current  //.finish()
-//    exitProcess(0)
-//}

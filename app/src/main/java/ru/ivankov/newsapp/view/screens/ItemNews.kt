@@ -177,7 +177,6 @@ fun ItemNewsProfile(
             )
             .fillMaxWidth()
             .padding(horizontal = 5.dp, vertical = 4.dp)
-
     )
     {
         Column(
@@ -188,7 +187,6 @@ fun ItemNewsProfile(
                     else Color.White
                 )
         ) {
-
             AsyncImage(
                 model = item.image,//profileState.value?.avatar,
                 contentDescription = "Картиночка",
@@ -254,21 +252,3 @@ fun ItemNewsProfile(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun prevItemNews(){
-//    NewsAppTheme {
-//        ItemNews(item = NewsContent(
-//            "Какая-то новость",
-//            1,
-//            "",
-//            NewsContentTags(1,"Tag"),
-//            "Название",
-//            "ЮID",
-//            "Имя пользователя"
-//        )
-//
-//
-//    }
-//}

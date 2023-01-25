@@ -77,13 +77,7 @@ class NewsViewModel : ViewModel() {
 
     //------------------Методы----------------------------------------------------
     //-------------Регистрация - добавление пользователя-------------------------------------------
-    fun postRegistration(user: UserInfoRequest
-//        avatar: String,
-//        email: String,
-//        name: String,
-//        password: String,
-//        role: String
-    ){
+    fun postRegistration(user: UserInfoRequest){
         viewModelScope.launch(Dispatchers.IO) {
             val callAddUser: Call<AuthorizationResponse>? = ApiService.instance?.api?.addUserRequest(
                 registrationRequest(
@@ -100,19 +94,16 @@ class NewsViewModel : ViewModel() {
                         Log.d("Reg", "${response.code() }")
                         _registrationMessage.value = ""
                     }
-
                     else{
                         _registrationMessage.value = "Ошибка! Попробуйте иначе."
                     }
                 }
-
                 override fun onFailure(call: Call<AuthorizationResponse?>, t: Throwable) {
                     Log.d("Reg", "$t")
                 }
             })
         }
     }
-
     //------------------Получение списка новостей----------------------------------------------------
     fun getNewsList(page: Int) {
         viewModelScope.launch {
@@ -125,8 +116,6 @@ class NewsViewModel : ViewModel() {
                     response: Response<NewsListResponse>
                 ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
 ////в случае, если postLogin() выполнится удачно
-
-                    //List<NewsContent>
                     _newsList.value = response.body()?.data?.content
                     val elementAmount = response.body()?.data?.numberOfElements
                     if (elementAmount != null) {
@@ -134,16 +123,13 @@ class NewsViewModel : ViewModel() {
                     }
                     Log.d("page", "Количество страниц - ${_pageAmount.value}")
                 }
-
                 override fun onFailure(call: Call<NewsListResponse>, t: Throwable) {
-
                     Log.d("page", "$t")
                 }
             })
         }
     }
     //--------------Редактирование учётной записи------------------------------------------------------
-
     fun updateUser(user: UserInfoRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             val callUpdateUser: Call<UserInfoResponse>? = ApiService.instance?.api?.editUserRequest(
@@ -154,7 +140,6 @@ class NewsViewModel : ViewModel() {
                     role = "role"
                 ), token = profileData.value!!.token
             )
-
             callUpdateUser?.enqueue(object : Callback<UserInfoResponse?> {
                 override fun onResponse(
                     call: Call<UserInfoResponse?>,
@@ -162,17 +147,13 @@ class NewsViewModel : ViewModel() {
                 ) {
                      _updateUserMessage.value = response.code().toInt()
                      Log.d("updateUser", "${response.code()}")
-                    //Toast.makeText(this,"Задача обновлена",Toast.LENGTH_SHORT).show()
                 }
-
                 override fun onFailure(call: Call<UserInfoResponse?>, t: Throwable) {
                     Log.d("updateUser", "$t")
-                    // Toast.makeText(context,"ОШИБКА! ВКЛЮЧИТЕ ИНТЕРНЕТ!",Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
-
     //--------------Удаление учётной записи------------------------------------------------------
     fun deleteUser(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -188,14 +169,12 @@ class NewsViewModel : ViewModel() {
                     Log.d("deleteUser", "Профиль удалён")
                     _profileData.value = null
                 }
-
                 override fun onFailure(call: Call<PostNewsResponse?>, t: Throwable) {
                     Log.d("deleteUser", "С удалением что-то пошло не так")
                 }
             })
         }
     }
-
     //------------------Аутентификация----------------------------------------------------
     fun postAuthentification(email: String, password: String, completion: () -> Unit) {
         viewModelScope.launch {
@@ -208,11 +187,10 @@ class NewsViewModel : ViewModel() {
                     response: Response<LoginResponse>
                 ) { //В методе onResponse мы указываем что мы будем делать с ответом сервера,
 ////в случае, если postLogin() выполнится удачно
-
                     if(response.code() == 200){
                     _profileData.value =
                         DataLoginResponse(
-                            avatar = response.body()?.data!!.avatar,//приходит null
+                            avatar = response.body()?.data!!.avatar,
                             email = response.body()?.data!!.email,
                             id = response.body()?.data!!.id,
                             name = response.body()?.data!!.name,
@@ -225,15 +203,12 @@ class NewsViewModel : ViewModel() {
                     else{
                         _loginMessage.value = "Ошибка. Попробуйте ещё раз."
                         Log.d(TAG, "Код - ${response.code()}")
-
                     }
                     launch(Dispatchers.Main) {
                         completion()
                     }
                 }
-
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-
                     Log.d(TAG, "ОШИБКА!!!")
                 }
             }
@@ -261,24 +236,16 @@ class NewsViewModel : ViewModel() {
             override fun onFailure(call: Call<NewsData>, t: Throwable) {
                 Log.d("search", "${_newsList.value}")
             }
-
             override fun onResponse(call: Call<NewsData>, response: Response<NewsData>) {
                 val fundedNews = response.body()!!.content
                 _newsList.value = fundedNews
                 Log.d("search", "${response.code()}")
             }
         })
-
     }
 
     //-------------Функция добавления задачи-------------------------------------------
-    fun insertNews(
-        new: MyNew
-//        description: String,
-//        image: String,
-//        tags: List<String>,
-//        title: String
-    ) {
+    fun insertNews(new: MyNew) {
         viewModelScope.launch(Dispatchers.IO) {
             val callPostNews: Call<PostNewsResponse>? = ApiService.instance?.api?.postNews(
                 PostNewsBody(
@@ -286,9 +253,7 @@ class NewsViewModel : ViewModel() {
                     image = new.image,
                     tags = new.tags,
                     title = new.title
-                ),
-                profileData.value!!.token
-            )
+                ), profileData.value!!.token )
             callPostNews?.enqueue(object : Callback<PostNewsResponse?> {
                 override fun onResponse(
                     call: Call<PostNewsResponse?>,
@@ -297,14 +262,12 @@ class NewsViewModel : ViewModel() {
                     getNewsList(1)
                     Log.d("createNews", "${response.code()}")
                 }
-
                 override fun onFailure(call: Call<PostNewsResponse?>, t: Throwable) {
                     Log.d("createNews", "$t")
                 }
             })
         }
     }
-
     //------------------------------------------------------------------------
 //-------------Функция получения данных пользователя по Id-------------------------------------------
     fun getUserInfoById(id: String) {
@@ -330,7 +293,6 @@ class NewsViewModel : ViewModel() {
             }
         })
     }
-
     //-------------Функция добавления аватара-------------------------------------------
     fun uploadAvatar(picture: MultipartBody.Part?){
         viewModelScope.launch(Dispatchers.IO) {
@@ -370,7 +332,6 @@ class NewsViewModel : ViewModel() {
             })
         }
     }
-
     fun updateNews(newsId: Int,
                     image: String,
                     description: String,
@@ -383,7 +344,6 @@ class NewsViewModel : ViewModel() {
                 body = PostNewsBody(image = image, description = description, tags = tags, title = title),
                 token = profileData.value!!.token
             )
-
             callupdateNews?.enqueue(object : Callback<PostNewsResponse> {
                 override fun onResponse(call: Call<PostNewsResponse>, response: Response<PostNewsResponse>) {
                     Log.d("editNews", "${response.code()}")
@@ -394,16 +354,6 @@ class NewsViewModel : ViewModel() {
                 }
             })
         }}
-
-//class ViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
-//            return NewsViewModel(application = application) as T
-//        }
-//        throw  IllegalArgumentException("Unknown ViewModel Class")
-//    }
-//
-//}
 }
 
 

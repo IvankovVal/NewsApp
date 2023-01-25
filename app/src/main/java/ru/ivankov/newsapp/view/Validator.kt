@@ -3,7 +3,6 @@ package ru.ivankov.newsapp.view
 import ru.ivankov.newsapp.model.MyNew
 import ru.ivankov.newsapp.model.UserInfoRequest
 
-
 fun emailValidator(email: String): Boolean {
     val emailEndsList =
         listOf("ru", "com", "org", "net", "su", "kz", "ua", "by")

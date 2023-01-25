@@ -54,11 +54,8 @@ fun RegistrationOrEditScreen(
     contentResolver: ContentResolver,
     isRegistration: Boolean
 ) {
-
     val context = LocalContext.current
-    val profileState = viewModel.profileData.observeAsState()
     val regMessageState = viewModel.registrationMessage.observeAsState()
-    val editMessageState = viewModel.updateUserMessage.observeAsState()
     val registrationNameState = remember { mutableStateOf (if (isRegistration) "" else viewModel.profileData.value!!.name) }
     val registrationEmailState = remember { mutableStateOf (if (isRegistration) "" else viewModel.profileData.value!!.email) }
     val isEmailValid = remember { mutableStateOf(false) }
@@ -90,7 +87,6 @@ fun RegistrationOrEditScreen(
     )
     val avatarState = remember { mutableStateOf(if (isRegistration)imageUri else viewModel.profileData.value?.avatar) }
 
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -115,7 +111,6 @@ fun RegistrationOrEditScreen(
                     model = imageUri,
                     modifier = Modifier.fillMaxWidth(),
                     contentDescription = "Selected image", )
-
             }
             Row(
                 modifier = Modifier
@@ -176,8 +171,6 @@ fun RegistrationOrEditScreen(
                                   }
                                   else   Toast.makeText(context,"Не выбрано",Toast.LENGTH_SHORT).show()
 
-
-
                     },
                 ) {
                     Text(text = "Сохранить")
@@ -230,7 +223,6 @@ fun RegistrationOrEditScreen(
                     label = { Text("Ввести пароль") },
                     modifier = Modifier.padding(12.dp)
                 )
-
             }
         }
 //--------------выбор нижнего бокса в зависимости от того для чего используется функция-------------
@@ -311,16 +303,6 @@ fun RegistrationOrEditScreen(
 
                             }
                             else Toast.makeText(context,"Чего-то  не хватает",Toast.LENGTH_LONG).show()
-
-//                                if (editMessageState.value == 200)
-//                                {viewModel._profileData.value = null
-//                                viewModel.getNewsList(1)
-//                                viewModel.updateUserMessage.value = 0
-//                                navController.navigate(route = AppNavHost.News.route)}
-//
-//                             else Toast.makeText(context,"Чего-то  не хватает",Toast.LENGTH_LONG).show()
-
-
                         }
                     ) { Text("Редактировать") }
 //Кнопка отмены редактирования ------------------------------------------------------------------
@@ -336,7 +318,3 @@ fun RegistrationOrEditScreen(
         }
     }
 }
-//Выйти из профиля
-//viewModel._profileData.value = null
-//viewModel.getNewsList(1)
-//navController.navigate(route = AppNavHost.News.route)
